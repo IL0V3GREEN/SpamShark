@@ -1,0 +1,4 @@
+aiogram==3.0.0b9
+aiohttp==3.8.5
+Pyrogram==2.0.106
+pymongo==4.4.1
