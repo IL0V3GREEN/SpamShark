@@ -10,7 +10,7 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_applicati
 BASE_URL = "https://spamshark-production.up.railway.app"
 MAIN_BOT_TOKEN = "6249367873:AAFra-Kvtu6i1V9lS8kvx_9J8-XGxDTxCI8"
 WEB_SERVER_HOST = "0.0.0.0"
-WEB_SERVER_PORT = 8535
+WEB_SERVER_PORT = 8522
 MAIN_BOT_PATH = "/main.py"
 
 
