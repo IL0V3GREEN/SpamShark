@@ -80,7 +80,7 @@ def client_finish_buttons(url: list):
         )
 
 
-def admin_spam_start(url: list | None = None):
+def admin_spam_start(url: list or None = None):
     builder = InlineKeyboardBuilder()
     if url is not None:
         for i in url:
