@@ -4,7 +4,7 @@ from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from keyboards.balance_buttons import deposit_menu, payment_methods, done_transaction, approving_pay
+from keyboards.balance_buttons import deposit_menu, payment_methods, done_transaction, approving_pay, cryptopay_panel
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from mongo import Database
@@ -12,7 +12,7 @@ from utils.bank_type import check_bank
 from aiocryptopay import AioCryptoPay, Networks
 
 
-crypto = AioCryptoPay("112126:AA1BgAlop8sbbjxEXaxFiBfaZYChxkF74pA", Networks.MAIN_NET)
+crypto = AioCryptoPay("8055:AAXZx66BTYEP7WC2k0Wl9JpR8dmPUF8WOuN", Networks.TEST_NET)
 db = Database()
 router = Router()
 
@@ -101,8 +101,15 @@ async def getting_method(call: CallbackQuery, state: FSMContext, bot: Bot):
         pass
 
     elif action == "crypto":
-        print(await crypto.get_currencies())
-        print(await crypto.get_exchange_rates())
+        x = await crypto.get_exchange_rates()
+        currency_list = []
+        for i in x:
+            if i.target == "RUB":
+                currency_list.append(i)
+        await call.message.edit_text(
+            "Выбери криптовалюуту ⬇️",
+            reply_markup=cryptopay_panel(currency_list)
+        )
 
 
 # sending transaction to admin
