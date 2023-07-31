@@ -9,8 +9,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from mongo import Database
 from utils.bank_type import check_bank
+from aiocryptopay import AioCryptoPay, Networks
 
 
+crypto = AioCryptoPay("112126:AA1BgAlop8sbbjxEXaxFiBfaZYChxkF74pA", Networks.MAIN_NET)
 db = Database()
 router = Router()
 
@@ -99,7 +101,8 @@ async def getting_method(call: CallbackQuery, state: FSMContext, bot: Bot):
         pass
 
     elif action == "crypto":
-        pass
+        print(await crypto.get_currencies())
+        print(await crypto.get_exchange_rates())
 
 
 # sending transaction to admin
