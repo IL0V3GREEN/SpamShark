@@ -57,7 +57,7 @@ async def getting_amount(message: Message, state: FSMContext):
                 await state.update_data(amount=amount)
                 await message.answer(
                     f"🧾 <b>Пополнение на {amount}₽</b>\n\n"
-                    f"<i>*Если хотите изменить сумму пополнения,\n"
+                    f"<i>*Если хотите изменить сумму пополнения, "
                     f"просто отправьте другое число*</i>\n\n"
                     f"Выберите способ оплаты:",
                     reply_markup=payment_methods()
@@ -75,7 +75,7 @@ async def getting_amount(message: Message, state: FSMContext):
         await message.answer(
             f"👤 ID: <tg-spoiler>{message.from_user.id}</tg-spoiler>\n\n"
             f"Баланс: <b>{db.user_info(message.from_user.id)['balance']}₽</b>\n\n"
-            f"🏦 <b>Cards, Crypto, BinancePay</b>",
+            f"<b>Cards, Crypto, BinancePay</b>",
             reply_markup=deposit_menu()
         )
 
@@ -90,8 +90,8 @@ async def getting_method(call: CallbackQuery, state: FSMContext, bot: Bot):
         card = db.collection.find_one({'my_cards': 'my_cards'})['cards'][x]
         bank = check_bank(card)
         await call.message.edit_text(
-            f"<i><b>{bank}</b></i>\n\n"
-            f"<b>Пополнение на {data['amount']}₽</b>\n"
+            f"🏦 <i><b>{bank}</b></i>\n\n"
+            f"Сумма перевода: <b>{data['amount']}₽</b>\n"
             f"Номер карты: <code>{card}</code>\n\n"
             f"<i>нажми на кнопку после успешного перевода средств</i>",
             reply_markup=done_transaction(call.from_user.id, data['amount'], bank)
