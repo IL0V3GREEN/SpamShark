@@ -7,7 +7,7 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
 
-BASE_URL = "https://worker-production-9caf.up.railway.app"
+BASE_URL = "https://spamshark-production.up.railway.app"
 MAIN_BOT_TOKEN = "6249367873:AAFra-Kvtu6i1V9lS8kvx_9J8-XGxDTxCI8"
 WEB_SERVER_HOST = "0.0.0.0"
 WEB_SERVER_PORT = 8532
