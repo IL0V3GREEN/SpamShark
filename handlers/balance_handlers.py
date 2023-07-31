@@ -26,7 +26,7 @@ async def balance_menu(message: Message):
     await message.answer(
         f"👤 ID: <tg-spoiler>{message.from_user.id}</tg-spoiler>\n\n"
         f"Баланс: <b>{db.user_info(message.from_user.id)['balance']:.2f}₽</b>\n\n"
-        f"🏦 <b>Cards, Crypto, BinancePay</b>",
+        f"<b>Cards, Crypto, BinancePay</b>",
         reply_markup=deposit_menu()
     )
 
@@ -111,9 +111,11 @@ async def sending_transaction(call: CallbackQuery, bot: Bot):
     user_id = int(call.data.split("_")[2])
     amount = int(call.data.split("_")[3])
     bank = call.data.split("_")[4]
-    await call.message.edit_text(
+    await call.message.delete()
+    await call.message.answer(
         "<b>Твой перевод обрабатывается</b>\n\n"
-        "Среднее время обработки - 15 минут ⏳"
+        "Среднее время обработки - 15 минут ⏳",
+        reply_markup=ReplyKeyboardRemove()
     )
     await bot.send_message(
         6364771832,
@@ -133,8 +135,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
     if action == "accept":
         await bot.send_message(
             user_id,
-            f"✅ Твой счет успешно пополнен на <b>{amount}₽</b>",
-            reply_markup=ReplyKeyboardRemove()
+            f"✅ Твой счет успешно пополнен на <b>{amount}₽</b>"
         )
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
         await call.message.edit_text(
@@ -145,8 +146,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
     else:
         await bot.send_message(
             user_id,
-            f"🤥 Твой перевод на <b>{amount}₽</b> не прошел..",
-            reply_markup=ReplyKeyboardRemove()
+            f"🤥 Твой перевод на <b>{amount}₽</b> не прошел.."
         )
         await call.message.edit_text(
             f"{user_id}\n"
