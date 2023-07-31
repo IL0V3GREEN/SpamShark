@@ -54,3 +54,14 @@ def approving_pay(user_id, amount):
     )
     builder.adjust(1)
     return builder.as_markup()
+
+
+def cryptopay_panel(currency_list):
+    builder = InlineKeyboardBuilder()
+    for i in currency_list:
+        builder.button(
+            text=f"{i.source}",
+            callback_data=f"paycryptobot_{i.source}_" + f"{i.rate}"
+        )
+    builder.adjust(3)
+    return builder.as_markup()
