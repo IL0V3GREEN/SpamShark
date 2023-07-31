@@ -1,1 +1,1 @@
-worker: python3 main.py
+spamshark: python3 main.py
