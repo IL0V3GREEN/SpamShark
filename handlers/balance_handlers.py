@@ -12,7 +12,7 @@ from utils.bank_type import check_bank
 from aiocryptopay import AioCryptoPay, Networks
 
 
-crypto = AioCryptoPay("8055:AAXZx66BTYEP7WC2k0Wl9JpR8dmPUF8WOuN", Networks.TEST_NET)
+crypto = AioCryptoPay("112126:AA1BgAlop8sbbjxEXaxFiBfaZYChxkF74pA", Networks.MAIN_NET)
 db = Database()
 router = Router()
 
@@ -83,7 +83,7 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
         )
 
     elif action == "binance":
-        pass
+        await call.message.answer("Этот метод пока недоступен.")
 
     elif action == "crypto":
         x = await crypto.get_exchange_rates()
