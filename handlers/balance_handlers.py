@@ -47,7 +47,7 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(BalanceState.amount, F.text)
-async def getting_amount(message: Message, state: FSMContext, bot: Bot):
+async def getting_amount(message: Message, state: FSMContext):
     try:
         amount = int(message.text)
         if amount >= 100:
@@ -113,11 +113,12 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
         float(amount),
         paid_btn_name="openBot",
         paid_btn_url="https://t.me/spamsharkbot",
-        expires_in=1800
+        expires_in=1800,
+        payload=f"{call.from_user.id}"
     )
     await call.message.edit_text(
         f"Сумма перевода: <b>{amount} {currency}</b>\n\n"
-        f"<i>одноразовая ссылка действительна в течении 30 минут ⏳</i>",
+        f"<i>счет действителен в течении 30 минут ⏳</i>",
         reply_markup=crypto_pay_button(
             invoice.pay_url,
             amount,
