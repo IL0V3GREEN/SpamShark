@@ -19,11 +19,12 @@ router = Router()
 
 
 @router.message(Command(commands="parse"))
-async def start_parsing(message: Message):
+async def start_parsing(message: Message, state: FSMContext):
     await message.answer(
         "🌚 Каких пользователей парсим?",
         reply_markup=where_spamming()
     )
+    await state.clear()
 
 
 @router.callback_query(F.data.startswith("parsetype"))

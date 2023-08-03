@@ -18,19 +18,20 @@ async def start_handle(message: Message, state: FSMContext):
 
     if message.text[7:] == "":
         await message.answer(
-            "<b>Приветствуем тебя, в SpamShark!</b> 🦈\n\n"
+            "<b>Приветствуем тебя в SpamShark!</b> 🦈\n\n"
             "👨🏻‍🏫 Наш сервис может спарсить участников открытых чатов и каналов, а также ты"
             "можешь воспользоваться нашим платным сервисом быстрой "
             "<a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылки</b></a> 📩\n\n"
             'Новостной канал: <b>t.me/spamshark</b>\n'
-            "Поддержка: <b>t.me/gojukai_san</b>\n\n"
+            "Поддержка: <b>t.me/rrassvetov</b>\n\n"
             '<i>Чтобы начать пользоваться ботом, нажми кнопку <b>"Меню"</b></i>',
             reply_markup=ReplyKeyboardRemove(),
             disable_web_page_preview=True
         )
-        await state.clear()
     elif message.text[7:] == "spamcreate":
         await message.answer(
             "🌚 Выберите целевую аудиторию.",
             reply_markup=choose_theme()
         )
+
+    await state.clear()

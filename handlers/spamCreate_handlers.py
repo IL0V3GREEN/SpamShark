@@ -28,11 +28,12 @@ class UserState(StatesGroup):
 
 
 @router.message(Command(commands="spam"))
-async def start_spam_creating(message: Message):
+async def start_spam_creating(message: Message, state: FSMContext):
     await message.answer(
         "🌚 Выберите целевую аудиторию.",
         reply_markup=choose_theme()
     )
+    await state.clear()
 
 
 @router.callback_query(F.data.startswith("spamtype"))
