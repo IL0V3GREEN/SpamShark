@@ -15,15 +15,15 @@ def deposit_menu():
     return builder.as_markup()
 
 
-def crypto_pay_button(url, amount, currency):
+def crypto_pay_button(url, amount, currency, invoice_id, user_id, rubles):
     builder = InlineKeyboardBuilder()
     builder.button(
         text=f"Оплатить {amount} {currency}",
         url=url
     )
     builder.button(
-        text="🔙 Назад",
-        callback_data="back_to_crypto_list"
+        text="✅ Я оплатил",
+        callback_data=f"ihavepaid_{invoice_id}_{user_id}_{rubles}"
     )
     builder.adjust(1)
     return builder.as_markup()
