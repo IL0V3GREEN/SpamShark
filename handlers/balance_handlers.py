@@ -1,7 +1,7 @@
 
 import random
 from aiogram import F, Router, Bot
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
 from keyboards.balance_buttons import deposit_menu, payment_methods, \
     done_transaction, approving_pay, cryptopay_panel, crypto_pay_button
@@ -113,18 +113,45 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
         float(amount),
         paid_btn_name="openBot",
         paid_btn_url="https://t.me/spamsharkbot",
-        expires_in=1800,
-        payload=f"{call.from_user.id}"
+        expires_in=1800
     )
-    await call.message.edit_text(
-        f"Сумма перевода: <b>{amount} {currency}</b>\n\n"
-        f"<i>счет действителен в течении 30 минут ⏳</i>",
+    photo = FSInputFile("data/photo.jpeg")
+    await call.message.delete()
+    await call.message.answer_photo(
+        photo=photo,
+        caption=f"Сумма перевода: <b>{amount} {currency}</b>\n\n"
+                f"<i>счет действителен в течении 30 минут ⏳</i>",
         reply_markup=crypto_pay_button(
             invoice.pay_url,
             amount,
-            currency
+            currency,
+            invoice.invoice_id,
+            call.from_user.id,
+            data['amount']
         )
     )
+
+
+@router.callback_query(F.data.startswith("ihavepaid"))
+async def approving_cryptopay(call: CallbackQuery):
+    invoice_id = int(call.data.split("_")[1])
+    user_id = int(call.data.split("_")[2])
+    amount = int(call.data.split("_")[3])
+    status = await crypto.get_invoices(invoice_ids=invoice_id)
+    if status == "active":
+        await call.message.answer("📛 Счет не оплачен.")
+
+    elif status == "paid":
+        await call.message.delete()
+        await call.message.answer(f"Твой счет успешно пополнен на <b>{amount}₽</b>")
+        db.update_string(
+            user_id,
+            {'balance': (db.user_info(user_id)['balance'] + amount)}
+        )
+
+    elif status == "expired":
+        await call.message.delete()
+        await call.message.answer("⌛️ Истек срок действия счета.")
 
 
 # sending transaction to admin
@@ -175,13 +202,3 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
             f"Отклонено"
         )
 
-
-@router.callback_query(F.data == "back_to_crypto_list")
-async def getting_back_to_crypto_list(call: CallbackQuery, state: FSMContext):
-    await call.message.edit_text(
-        f"👤 ID: <tg-spoiler>{call.from_user.id}</tg-spoiler>\n\n"
-        f"Баланс: <b>{db.user_info(call.from_user.id)['balance']:.2f}₽</b>\n\n"
-        f"<b>Cards, Crypto, BinancePay</b>",
-        reply_markup=deposit_menu()
-    )
-    await state.clear()
