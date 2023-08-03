@@ -139,11 +139,11 @@ async def approving_cryptopay(call: CallbackQuery):
     amount = int(call.data.split("_")[3])
     invoice = await crypto.get_invoices(invoice_ids=invoice_id)
     if invoice.status == "active":
-        await call.message.answer("📛 Счет не оплачен.")
+        await call.message.answer("🤥 Ты не оплатил счет..")
 
     elif invoice.status == "paid":
         await call.message.delete()
-        await call.message.answer(f"Твой счет успешно пополнен на <b>{amount}₽</b>")
+        await call.message.answer(f"Твой счет пополнен на <b>{amount}₽</b>")
         db.update_string(
             user_id,
             {'balance': (db.user_info(user_id)['balance'] + amount)}
