@@ -15,6 +15,20 @@ def deposit_menu():
     return builder.as_markup()
 
 
+def crypto_pay_button(url, amount, currency):
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text=f"Оплатить {amount} {currency}",
+        url=url
+    )
+    builder.button(
+        text="🔙 Назад",
+        callback_data="back_to_crypto_list"
+    )
+    builder.adjust(1)
+    return builder.as_markup()
+
+
 def payment_methods():
     builder = InlineKeyboardBuilder()
     builder.button(
