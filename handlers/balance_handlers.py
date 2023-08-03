@@ -111,7 +111,7 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
     invoice = await crypto.create_invoice(
         currency,
         amount,
-        paid_btn_name="🔙 Вернуться в магазин",
+        paid_btn_name="openBot",
         paid_btn_url="https://t.me/spamsharkbot",
         expires_in=3600
     )
