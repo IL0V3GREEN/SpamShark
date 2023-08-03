@@ -1,7 +1,6 @@
 from handlers import start_handler, spamCreate_handlers, parsing_handlers, balance_handlers
 from middlewares.add_user_middleware import CounterMiddleware
 import logging
-from post import hello
 from aiogram import Bot, Dispatcher
 from aiohttp import web
 from aiogram.client.session.aiohttp import AiohttpSession
@@ -35,7 +34,6 @@ def main():
     dp.startup.register(on_startup)
 
     app = web.Application()
-    app.router.add_post("/8055:AAXZx66BTYEP7WC2k0Wl9JpR8dmPUF8WOuN", hello)
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=MAIN_BOT_PATH)
     setup_application(app, dp, bot=bot)
     web.run_app(app, host=WEB_SERVER_HOST, port=WEB_SERVER_PORT)
