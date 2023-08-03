@@ -105,7 +105,7 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
     amount = 0
     if currency in ["USDT", "TON", "BUSD", "TRX", "USDC"]:
         amount = float(f"{(data['amount'] / rate):.3f}")
-    else:
+    if currency in ["BTC", "ETH"]:
         amount = float(f"{(data['amount'] / rate):.7f}")
 
     invoice = await crypto.create_invoice(
