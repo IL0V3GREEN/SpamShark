@@ -103,7 +103,7 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
     currency = call.data.split("_")[1]
     rate = float(call.data.split("_")[2])
     amount = ""
-    if currency in ["USDT", "TON", "BUSD", "TRX", "USDC"]:
+    if currency in ["USDT", "TON", "BUSD", "TRX", "USDC", "BNB"]:
         amount = f"{(data['amount'] / rate):.3f}"
     if currency in ["BTC", "ETH"]:
         amount = f"{(data['amount'] / rate):.7f}"
@@ -116,9 +116,8 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
         expires_in=3600
     )
     await call.message.edit_text(
-        f"🧾 <b>CryptoPay</b>\n\n"
-        f"Сумма перевода: <b>{amount} {currency}</b>\n"
-        f"<i>одноразовая ссылка действительна в течении 60 минут</i>",
+        f"Сумма перевода: <b>{amount} {currency}</b>\n\n"
+        f"<i>одноразовая ссылка действительна в течении 60 минут ⏳</i>",
         reply_markup=crypto_pay_button(
             invoice.pay_url,
             amount,
@@ -178,7 +177,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
 
 @router.callback_query(F.data == "back_to_crypto_list")
 async def getting_back_to_crypto_list(call: CallbackQuery, state: FSMContext):
-    await call.message.answer(
+    await call.message.edit_text(
         f"👤 ID: <tg-spoiler>{call.from_user.id}</tg-spoiler>\n\n"
         f"Баланс: <b>{db.user_info(call.from_user.id)['balance']:.2f}₽</b>\n\n"
         f"<b>Cards, Crypto, BinancePay</b>",
