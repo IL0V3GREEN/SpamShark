@@ -1,10 +1,10 @@
-import asyncio
+
 import random
 from aiogram import F, Router, Bot
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
+from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from keyboards.balance_buttons import deposit_menu, payment_methods, done_transaction, approving_pay, cryptopay_panel
+from keyboards.balance_buttons import deposit_menu, payment_methods, \
+    done_transaction, approving_pay, cryptopay_panel, crypto_pay_button
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from mongo import Database
@@ -36,12 +36,9 @@ async def balance_menu(message: Message, state: FSMContext):
 async def balance_callback(call: CallbackQuery, state: FSMContext):
     action = call.data.split("_")[1]
     if action == "deposit":
-        builder = ReplyKeyboardBuilder()
-        builder.button(text="Отменить оплату")
         await call.message.answer(
             "🧐 На сколько <b>₽</b> пополняем?\n\n"
-            "<i>минимальное пополнение - 100₽</i>",
-            reply_markup=builder.as_markup(resize_keyboard=True)
+            "<i>минимальное пополнение - 100₽</i>"
         )
         await state.set_state(BalanceState.amount)
 
@@ -51,36 +48,21 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
 
 @router.message(BalanceState.amount, F.text)
 async def getting_amount(message: Message, state: FSMContext, bot: Bot):
-    if message.text != "Отменить оплату":
-        try:
-            amount = int(message.text)
-            if amount >= 100:
-                await state.update_data(amount=amount)
-                await message.answer("...", reply_markup=ReplyKeyboardRemove())
-                await bot.delete_message(message.chat.id, message.message_id + 1)
-                await message.answer(
-                    f"🧾 <b>Пополнение на {amount}₽</b>\n\n"
-                    f"<i>*Если хотите изменить сумму пополнения, "
-                    f"просто отправьте другое число*</i>\n\n"
-                    f"Выберите способ оплаты:",
-                    reply_markup=payment_methods()
-                )
-
-            else:
-                await message.answer("📛 Минимальное пополнение - <b>100₽</b>")
-
-        except ValueError:
-            await message.answer("👨🏻‍🏫 Введите целое число")
-
-    else:
-        await message.answer("Пополнение отменено", reply_markup=ReplyKeyboardRemove())
-        await asyncio.sleep(1)
-        await message.answer(
-            f"👤 ID: <tg-spoiler>{message.from_user.id}</tg-spoiler>\n\n"
-            f"Баланс: <b>{db.user_info(message.from_user.id)['balance']}₽</b>\n\n"
-            f"<b>Cards, Crypto, BinancePay</b>",
-            reply_markup=deposit_menu()
-        )
+    try:
+        amount = int(message.text)
+        if amount >= 100:
+            await state.update_data(amount=amount)
+            await message.answer(
+                f"🧾 <b>Пополнение на {amount}₽</b>\n\n"
+                f"<i>*Если хотите изменить сумму пополнения, "
+                f"просто отправьте другое число*</i>\n\n"
+                f"Выберите способ оплаты:",
+                reply_markup=payment_methods()
+            )
+        else:
+            await message.answer("📛 Минимальное пополнение - <b>100₽</b>")
+    except ValueError:
+        await message.answer("👨🏻‍🏫 Введите целое число")
 
 
 # choosing payment methods
@@ -120,9 +102,28 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     currency = call.data.split("_")[1]
     rate = float(call.data.split("_")[2])
+    amount = 0
+    if currency in ["USDT", "TON", "BUSD", "TRX", "USDC"]:
+        amount = float(f"{(data['amount'] / rate):.3f}")
+    else:
+        amount = float(f"{(data['amount'] / rate):.7f}")
+
+    invoice = await crypto.create_invoice(
+        currency,
+        amount,
+        paid_btn_name="🔙 Вернуться в магазин",
+        paid_btn_url="https://t.me/spamsharkbot",
+        expires_in=3600
+    )
     await call.message.edit_text(
-        f"👾 <b>Crypto Bot</b>\n\n"
-        f"Сумма перевода: <b>{data['amount'] / rate} {currency}</b>"
+        f"🧾 <b>CryptoPay</b>\n\n"
+        f"Сумма перевода: <b>{amount} {currency}</b>\n"
+        f"<i>одноразовая ссылка действительна в течении 60 минут</i>",
+        reply_markup=crypto_pay_button(
+            invoice.pay_url,
+            amount,
+            currency
+        )
     )
 
 
@@ -173,3 +174,14 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
             f"{amount}₽\n\n"
             f"Отклонено"
         )
+
+
+@router.callback_query(F.data == "back_to_crypto_list")
+async def getting_back_to_crypto_list(call: CallbackQuery, state: FSMContext):
+    await call.message.answer(
+        f"👤 ID: <tg-spoiler>{call.from_user.id}</tg-spoiler>\n\n"
+        f"Баланс: <b>{db.user_info(call.from_user.id)['balance']:.2f}₽</b>\n\n"
+        f"<b>Cards, Crypto, BinancePay</b>",
+        reply_markup=deposit_menu()
+    )
+    await state.clear()
