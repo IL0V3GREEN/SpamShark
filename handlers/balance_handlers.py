@@ -102,15 +102,15 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     currency = call.data.split("_")[1]
     rate = float(call.data.split("_")[2])
-    amount = 0
+    amount = ""
     if currency in ["USDT", "TON", "BUSD", "TRX", "USDC"]:
-        amount = float(f"{(data['amount'] / rate):.3f}")
+        amount = f"{(data['amount'] / rate):.3f}"
     if currency in ["BTC", "ETH"]:
-        amount = float(f"{(data['amount'] / rate):.7f}")
+        amount = f"{(data['amount'] / rate):.7f}"
 
     invoice = await crypto.create_invoice(
         currency,
-        amount,
+        float(amount),
         paid_btn_name="openBot",
         paid_btn_url="https://t.me/spamsharkbot",
         expires_in=3600
