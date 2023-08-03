@@ -113,11 +113,11 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
         float(amount),
         paid_btn_name="openBot",
         paid_btn_url="https://t.me/spamsharkbot",
-        expires_in=3600
+        expires_in=1800
     )
     await call.message.edit_text(
         f"Сумма перевода: <b>{amount} {currency}</b>\n\n"
-        f"<i>одноразовая ссылка действительна в течении 60 минут ⏳</i>",
+        f"<i>одноразовая ссылка действительна в течении 30 минут ⏳</i>",
         reply_markup=crypto_pay_button(
             invoice.pay_url,
             amount,
