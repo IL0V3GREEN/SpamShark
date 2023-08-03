@@ -50,12 +50,14 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(BalanceState.amount, F.text)
-async def getting_amount(message: Message, state: FSMContext):
+async def getting_amount(message: Message, state: FSMContext, bot: Bot):
     if message.text != "Отменить оплату":
         try:
             amount = int(message.text)
             if amount >= 100:
                 await state.update_data(amount=amount)
+                await message.answer("...", reply_markup=ReplyKeyboardRemove())
+                await bot.delete_message(message.chat.id, message.message_id + 1)
                 await message.answer(
                     f"🧾 <b>Пополнение на {amount}₽</b>\n\n"
                     f"<i>*Если хотите изменить сумму пополнения, "
@@ -83,7 +85,7 @@ async def getting_amount(message: Message, state: FSMContext):
 
 # choosing payment methods
 @router.callback_query(F.data.startswith("method"))
-async def getting_method(call: CallbackQuery, state: FSMContext, bot: Bot):
+async def getting_method(call: CallbackQuery, state: FSMContext):
     action = call.data.split("_")[1]
     data = await state.get_data()
     if action == "cards":
@@ -133,8 +135,7 @@ async def sending_transaction(call: CallbackQuery, bot: Bot):
     await call.message.delete()
     await call.message.answer(
         "<b>Твой перевод обрабатывается</b>\n\n"
-        "Среднее время обработки - 15 минут ⏳",
-        reply_markup=ReplyKeyboardRemove()
+        "Среднее время обработки - 15 минут ⏳"
     )
     await bot.send_message(
         6364771832,
