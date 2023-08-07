@@ -201,98 +201,111 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(UserState.message_count, F.text)
-async def getting_self_count(message: Message, state: FSMContext):
+async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
     count = message.text
-    try:
-        count = int(count)
-        await state.update_data(message_count=count)
-        data = await state.get_data()
+    if message.text != "":
+        try:
+            count = int(count)
+            await state.update_data(message_count=count)
+            data = await state.get_data()
 
-        text = await check_text(data)
-        media = await check_media(data)
-        buttons = await check_inline(data)
+            text = await check_text(data)
+            media = await check_media(data)
+            buttons = await check_inline(data)
 
-        # text & media & buttons
-        if text and media and buttons:
-            await message.delete()
-            await message.answer_photo(
-                photo=data['media'],
-                caption=data['text'],
-                reply_markup=edit_sets(
-                    True, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+            # text & media & buttons
+            if text and media and buttons:
+                await message.delete()
+                await message.answer_photo(
+                    photo=data['media'],
+                    caption=data['text'],
+                    reply_markup=edit_sets(
+                        True, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    )
                 )
-            )
-            await state.set_state(UserState.client_text)
-        # text & media
-        elif text and media and not buttons:
-            await message.delete()
-            await message.answer_photo(
-                photo=data['media'],
-                caption=data['text'],
-                reply_markup=edit_sets(
-                    True, True, False, data['spam_theme'], data['message_count']
+                await state.set_state(UserState.client_text)
+            # text & media
+            elif text and media and not buttons:
+                await message.delete()
+                await message.answer_photo(
+                    photo=data['media'],
+                    caption=data['text'],
+                    reply_markup=edit_sets(
+                        True, True, False, data['spam_theme'], data['message_count']
+                    )
                 )
-            )
-            await state.set_state(UserState.client_text)
-        # text & buttons
-        elif text and buttons and not media:
-            await message.edit_text(
-                data['text'],
-                reply_markup=edit_sets(
-                    True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                await state.set_state(UserState.client_text)
+            # text & buttons
+            elif text and buttons and not media:
+                await message.edit_text(
+                    data['text'],
+                    reply_markup=edit_sets(
+                        True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    )
                 )
-            )
-            await state.set_state(UserState.client_text)
-        # media & buttons
-        elif media and buttons and not text:
-            await message.delete()
-            await message.answer_photo(
-                photo=data['media'],
-                reply_markup=edit_sets(
-                    False, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                await state.set_state(UserState.client_text)
+            # media & buttons
+            elif media and buttons and not text:
+                await message.delete()
+                await message.answer_photo(
+                    photo=data['media'],
+                    reply_markup=edit_sets(
+                        False, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    )
                 )
-            )
-            await state.set_state(UserState.client_text)
-        # just media
-        elif media and not text and not buttons:
-            await message.delete()
-            await message.answer_photo(
-                photo=data['media'],
-                reply_markup=edit_sets(
-                    False, True, False, data['spam_theme'], data['message_count']
+                await state.set_state(UserState.client_text)
+            # just media
+            elif media and not text and not buttons:
+                await message.delete()
+                await message.answer_photo(
+                    photo=data['media'],
+                    reply_markup=edit_sets(
+                        False, True, False, data['spam_theme'], data['message_count']
+                    )
                 )
-            )
-            await state.set_state(UserState.client_text)
-        # just text
-        elif text and not buttons and not media:
-            await message.edit_text(
-                data['text'],
-                reply_markup=edit_sets(
-                    True, False, False, data['spam_theme'], data['message_count']
+                await state.set_state(UserState.client_text)
+            # just text
+            elif text and not buttons and not media:
+                await message.edit_text(
+                    data['text'],
+                    reply_markup=edit_sets(
+                        True, False, False, data['spam_theme'], data['message_count']
+                    )
                 )
-            )
-            await state.set_state(UserState.client_text)
+                await state.set_state(UserState.client_text)
 
-        else:
+            else:
+                await message.answer(
+                    "Отправьте боту то, что будет рассылаться пользователям.\n"
+                    "Это может быть все, что угодно - текст, фото"
+                )
+                await state.set_state(UserState.client_text)
+
+        except ValueError:
             await message.answer(
-                "Отправьте боту то, что будет рассылаться пользователям.\n"
-                "Это может быть все, что угодно - текст, фото"
+                "📛 Введи корректное значение."
             )
-            await state.set_state(UserState.client_text)
-
-    except ValueError:
+    else:
+        await state.clear()
+        await message.answer("You have left the SpamShark builder", reply_markup=ReplyKeyboardRemove())
+        await bot.delete_message(message.chat.id, message.message_id + 1)
+        await asyncio.sleep(0.5)
         await message.answer(
-            "📛 Введи корректное значение."
+            '<i>Чтобы воспользоваться функциями <b>SpamShark</b> еще раз, нажми кнопку <b>"Меню"</b></i>\n\n'
+            'Новостной канал: <b>@spamshark</b>\n'
+            "Поддержка: <b>@rrassvetov</b>",
+            disable_web_page_preview=True
         )
 
 
 @router.message(UserState.client_text, F.photo | F.video)
-async def getting_text(message: Message, state: FSMContext):
+async def getting_text(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
 
     text = await check_text(data)
     buttons = await check_inline(data)
     await message.answer("You have entered in the SpamShark builder", reply_markup=exit_from_builder())
+    await bot.delete_message(message.chat.id, message.message_id + 1)
 
     if text and buttons:
         try:
@@ -371,13 +384,12 @@ async def getting_text(message: Message, state: FSMContext):
 
 
 @router.message(UserState.client_text, F.text)
-async def getting_text(message: Message, state: FSMContext):
+async def getting_text(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
     media = await check_media(data)
     buttons = await check_inline(data)
 
     if message.text != "🔚 Выйти из билдера":
-        await message.answer("You have entered the SpamShark builder", reply_markup=exit_from_builder())
         if media and buttons:
             await message.answer_photo(
                 photo=data['media'],
@@ -416,11 +428,12 @@ async def getting_text(message: Message, state: FSMContext):
     else:
         await state.clear()
         await message.answer("You have left the SpamShark builder", reply_markup=ReplyKeyboardRemove())
+        await bot.delete_message(message.chat.id, message.message_id + 1)
         await asyncio.sleep(0.5)
         await message.answer(
             '<i>Чтобы воспользоваться функциями <b>SpamShark</b> еще раз, нажми кнопку <b>"Меню"</b></i>\n\n'
-            'Новостной канал: <b>t.me/spamshark</b>\n'
-            "Поддержка: <b>t.me/gojukai_san</b>",
+            'Новостной канал: <b>@spamshark</b>\n'
+            "Поддержка: <b>@rrassvetov</b>",
             disable_web_page_preview=True
         )
 
