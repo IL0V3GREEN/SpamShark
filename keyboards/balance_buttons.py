@@ -36,10 +36,6 @@ def payment_methods():
         callback_data="method_cards"
     )
     builder.button(
-        text="BinancePay",
-        callback_data="method_binance"
-    )
-    builder.button(
         text="Crypto",
         callback_data="method_crypto"
     )
