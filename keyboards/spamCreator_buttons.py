@@ -1,4 +1,4 @@
-from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
 
@@ -61,14 +61,12 @@ def edit_sets(text: bool, media: bool, url: bool, theme: str, count: int, url_bu
         text="Подтвердить",
         callback_data=EditFactory(action="finish", text=text, url=url, media=media)
     )
+    builder.button(
+        text="🔙 Выйти",
+        callback_data="exitFromBuilder"
+    )
     builder.adjust(1)
     return builder.as_markup()
-
-
-def exit_from_builder():
-    builder = ReplyKeyboardBuilder()
-    builder.button(text="🔚 Выйти из билдера")
-    return builder.as_markup(resize_keyboard=True)
 
 
 def client_finish_buttons(url: list):
