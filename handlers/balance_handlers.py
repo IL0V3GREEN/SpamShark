@@ -26,7 +26,7 @@ async def balance_menu(message: Message, state: FSMContext):
     await message.answer(
         f"👤 ID: <tg-spoiler>{message.from_user.id}</tg-spoiler>\n\n"
         f"Баланс: <b>{db.user_info(message.from_user.id)['balance']:.2f}₽</b>\n\n"
-        f"<b>Cards, Crypto, BinancePay</b>",
+        f"💎 <b>Cards & Crypto</b>",
         reply_markup=deposit_menu()
     )
     await state.clear()
@@ -81,9 +81,6 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
             f"<i>нажми на кнопку после успешного перевода средств</i>",
             reply_markup=done_transaction(call.from_user.id, data['amount'], bank)
         )
-
-    elif action == "binance":
-        await call.message.answer("Этот метод пока недоступен.")
 
     elif action == "crypto":
         x = await crypto.get_exchange_rates()
