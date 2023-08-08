@@ -7,7 +7,7 @@ from aiogram.fsm.state import State, StatesGroup
 import os
 import asyncio
 import random
-from keyboards.where_pars_buttons import where_spamming
+from keyboards.parse_buttons import where_parsing
 
 
 class ParseStates(StatesGroup):
@@ -22,7 +22,7 @@ router = Router()
 async def start_parsing(message: Message, state: FSMContext):
     await message.answer(
         "🌚 Каких пользователей парсим?",
-        reply_markup=where_spamming()
+        reply_markup=where_parsing()
     )
     await state.clear()
 
