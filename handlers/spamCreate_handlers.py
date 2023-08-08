@@ -740,7 +740,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
             )
     else:
         await call.message.answer(
-            f"📛 <b>На твоем счету недостаточно средств - {db.user_info(call.from_user.id)['balance']}₽.</b> "
+            f"📛 <b>На твоем счету недостаточно средств.</b>\n\n"
             f"Пополни баланс - /balance или измени количество сообщений."
         )
 
@@ -749,9 +749,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
 async def exiting_from_builder(call: CallbackQuery, state: FSMContext):
     await call.message.delete()
     await call.message.answer(
-        '<i>Чтобы воспользоваться функциями <b>SpamShark</b> еще раз, нажми кнопку <b>"Меню"</b></i>\n\n'
-        'Новостной канал: <b>@spamshark</b>\n'
-        "Поддержка: <b>@rrassvetov</b>",
+        "🔚 Ты вышел из спам-билдера.\n\n"
+        '<i>Чтобы воспользоваться функциями <b>SpamShark</b> еще раз, нажми кнопку <b>"Меню"</b></i>\n\n',
         disable_web_page_preview=True
     )
     await state.clear()
