@@ -13,12 +13,9 @@ router = Router()
 
 @router.message(Command(commands="start"))
 async def start_handle(message: Message, state: FSMContext):
-    if not db.user_info(message.from_user.id):
-        db.add_user(message.from_user.id)
-
     if message.text[7:] == "":
         await message.answer(
-            "<b>Приветствуем тебя в SpamShark!</b> 🦈\n\n"
+            "<b>Приветствуем тебя в SpamShark!</b>\n\n"
             "👨🏻‍🏫 Наш сервис может спарсить участников открытых чатов и каналов, а также, ты "
             "можешь воспользоваться нашим платным сервисом быстрой "
             "<a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылки</b></a> 📩\n\n"
