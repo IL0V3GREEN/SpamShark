@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime
+import pytz
 
 
 class Database:
@@ -9,6 +10,7 @@ class Database:
         )
         self.db = self.client.get_database('spamshark')
         self.collection = self.db.get_collection('users')
+        self.tz = pytz.timezone("Europe/Moscow")
 
     def user_exists(self, user_id):
         result = self.collection.find_one({'user_id': user_id})
@@ -45,9 +47,9 @@ class Database:
                     'parse_orders': {
                         f'order_{count}': {
                             'date': {
-                                'year': datetime.now().strftime("%Y"),
-                                'month': datetime.now().strftime("%m"),
-                                'day': datetime.now().strftime("%d")
+                                'year': datetime.now(self.tz).strftime("%Y"),
+                                'month': datetime.now(self.tz).strftime("%m"),
+                                'day': datetime.now(self.tz).strftime("%d")
                             },
                             'username': username
                         }
@@ -56,21 +58,15 @@ class Database:
             }
         )
 
-    def check_parse_available(self, user_id) -> bool:
+    def check_parse_available(self, user_id):
         orders = self.collection.find_one({'user_id': user_id})['parse_orders']
+        ord_count = 0
         count = 0
         for i in orders:
-            try:
-                order_time = i['date']
-                year = order_time['year']
-                month = order_time['month']
-                day = order_time['day']
-                if year == datetime.now().strftime("%Y") \
-                        and month == datetime.now().strftime("%m") \
-                        and day == datetime.now().strftime("%d"):
-                    count += 1
-            except KeyError:
-                pass
+            if i[f'order_{ord_count}']['date']['year'] == datetime.now(self.tz) and \
+                    i[f'order_{ord_count}']['date']['month'] == datetime.now(self.tz).strftime("%m") and \
+                    i[f'order_{ord_count}']['date']['day'] == datetime.now(self.tz).strftime("%d"):
+                count += 1
+            ord_count += 1
 
-        if count < 3:
-            return True
+        print(count)
