@@ -32,14 +32,14 @@ async def getting_spam_locate(call: CallbackQuery, state: FSMContext):
     locate = call.data.split("_")[1]
     if locate == "chat":
         await call.message.edit_text(
-            "✏️ Введите юзернейм открытой группы (чата)\n\n"
+            "✏️ Введи юзернейм открытой группы (чата)\n\n"
             "<b>пример: alphaspam1</b>"
         )
         await state.set_state(ParseStates.chat_username)
 
     else:
         await call.message.edit_text(
-            "✏️ Введите юзернейм открытого канала с комментариями\n\n"
+            "✏️ Введи юзернейм открытого канала с комментариями\n\n"
             "<b>пример: alphaspam3</b>"
         )
         await state.set_state(ParseStates.channel_username)
@@ -87,5 +87,5 @@ async def getting_username(message: Message, state: FSMContext, bot: Bot):
 
     else:
         await message.answer(
-            "📛 Введите username (пример: alphaspam1) чата без @ и https://, как в примере"
+            "📛 Введи username (пример: alphaspam1) чата без @ и https://, как в примере"
         )

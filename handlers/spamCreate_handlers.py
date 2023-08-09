@@ -26,7 +26,7 @@ class UserState(StatesGroup):
 @router.message(Command(commands="spam"))
 async def start_spam_creating(message: Message, state: FSMContext):
     await message.answer(
-        "🌚 Выберите целевую аудиторию.",
+        "🌚 Выбери целевую аудиторию.",
         reply_markup=choose_theme()
     )
     await state.clear()
@@ -103,7 +103,7 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
         await state.set_state(UserState.client_text)
     else:
         await call.message.edit_text(
-            "🔢 Выберите количество сообщений.\n\n"
+            "🔢 Выбери количество сообщений.\n\n"
             "<i>1 сообщение = 1₽</i>",
             reply_markup=choose_count()
         )
@@ -184,7 +184,7 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
 
         else:
             await call.message.edit_text(
-                "Отправьте боту то, что будет рассылаться пользователям.\n"
+                "Отправь боту то, что будет рассылаться пользователям.\n"
                 "Это может быть все, что угодно - текст, фото, видео."
             )
             await state.set_state(UserState.client_text)
@@ -271,7 +271,7 @@ async def getting_self_count(message: Message, state: FSMContext):
 
         else:
             await message.answer(
-                "Отправьте боту то, что будет рассылаться пользователям.\n"
+                "Отправь боту то, что будет рассылаться пользователям.\n"
                 "Это может быть все, что угодно - текст, фото"
             )
             await state.set_state(UserState.client_text)
@@ -452,7 +452,7 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
         elif not callback_data.media:
             await call.message.delete()
             await call.message.answer(
-                "Отправьте боту то, что будет рассылаться пользователям.\n"
+                "Отправь боту то, что будет рассылаться пользователям.\n"
                 "Это может быть все, что угодно - текст, фото"
             )
     await state.update_data(text="")
@@ -499,7 +499,7 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
         builder.button(text="Отмена")
         await call.message.delete()
         await call.message.answer(
-            "Отправьте мне список URL-кнопок в одном сообщении. Пожалуйста, следуйте этому формату:\n\n"
+            "Отправь мне список URL-кнопок в одном сообщении. Пожалуйста, следуйте этому формату:\n\n"
             "<code>Кнопка 1 - http://example1.com\nКнопка 2 - http://example2.com</code>",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
@@ -548,7 +548,7 @@ async def getting_inline_buttons(message: Message, state: FSMContext):
                 await state.set_state(UserState.client_text)
             except IndexError:
                 await message.answer(
-                    "Пожалуйста, следуйте этому формату:\n\n"
+                    "Пожалуйста, следуй этому формату:\n\n"
                     "<code>Кнопка 1 - http://example1.com\n"
                     "Кнопка 2 - http://example2.com</code>"
                 )
@@ -564,7 +564,7 @@ async def getting_inline_buttons(message: Message, state: FSMContext):
                 await state.set_state(UserState.client_text)
             except IndexError:
                 await message.answer(
-                    "Пожалуйста, следуйте этому формату:\n\n"
+                    "Пожалуйста, следуй этому формату:\n\n"
                     "<code>Кнопка 1 - http://example1.com\n"
                     "Кнопка 2 - http://example2.com</code>"
                 )
@@ -580,7 +580,7 @@ async def getting_inline_buttons(message: Message, state: FSMContext):
                 await state.set_state(UserState.client_text)
             except IndexError:
                 await message.answer(
-                    "Пожалуйста, следуйте этому формату:\n\n"
+                    "Пожалуйста, следуй этому формату:\n\n"
                     "<code>Кнопка 1 - http://example1.com\n"
                     "Кнопка 2 - http://example2.com</code>"
                 )
@@ -614,13 +614,13 @@ async def editing_buttons(call: CallbackQuery, state: FSMContext):
     if action == "theme":
         await call.message.delete()
         await call.message.answer(
-            "🌚 Выберите целевую аудиторию.",
+            "🌚 Выбери целевую аудиторию.",
             reply_markup=choose_theme()
         )
     elif action == "count":
         await call.message.delete()
         await call.message.answer(
-            "🔢 Выберите количество сообщений.\n\n"
+            "🔢 Выбери количество сообщений.\n\n"
             "<i>1 сообщение = 1₽</i>",
             reply_markup=choose_count()
         )
