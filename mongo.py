@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-import random
+from datetime import datetime
 
 
 class Database:
@@ -36,17 +36,41 @@ class Database:
             {"$set": string}
         )
 
-    # def create_parse_order(self, user_id):
-    #
-    #     count = len(list(self.collection.find({'user_id': user_id})))
-    #
-    #     self.collection.update_one(
-    #         {'user_id': user_id},
-    #         {
-    #             '$addToSet': {
-    #                 'parse_orders': {
-    #                     f'order_{}'
-    #                 }
-    #             }
-    #         }
-    #     )
+    def create_parse_order(self, user_id, username):
+        count = len(self.collection.find_one({'user_id': user_id})['parse_orders'])
+        self.collection.update_one(
+            {'user_id': user_id},
+            {
+                '$addToSet': {
+                    'parse_orders': {
+                        f'order_{count}': {
+                            'date': {
+                                'year': datetime.now().strftime("%Y"),
+                                'month': datetime.now().strftime("%m"),
+                                'day': datetime.now().strftime("%d")
+                            },
+                            'username': username
+                        }
+                    }
+                }
+            }
+        )
+
+    def check_parse_available(self, user_id) -> bool:
+        orders = self.collection.find_one({'user_id': user_id})['parse_orders']
+        count = 0
+        for i in orders:
+            try:
+                order_time = i['date']
+                year = order_time['year']
+                month = order_time['month']
+                day = order_time['day']
+                if year == datetime.now().strftime("%Y") \
+                        and month == datetime.now().strftime("%m") \
+                        and day == datetime.now().strftime("%d"):
+                    count += 1
+            except KeyError:
+                pass
+
+        if count < 3:
+            return True
