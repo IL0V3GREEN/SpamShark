@@ -78,7 +78,7 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
             f"🏦 <i><b>{bank}</b></i>\n\n"
             f"Сумма перевода: <b>{data['amount']}₽</b>\n"
             f"Номер карты: <code>{card}</code>\n\n"
-            f"<i>нажми на кнопку после успешного перевода средств</i>",
+            f"<i>нажми на кнопку после успешного перевода</i>",
             reply_markup=done_transaction(call.from_user.id, data['amount'], bank)
         )
 
@@ -180,7 +180,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
     if action == "accept":
         await bot.send_message(
             user_id,
-            f"✅ Твой счет успешно пополнен на <b>{amount}₽</b>"
+            f"✅ Твой счет пополнен на <b>{amount}₽</b>"
         )
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
         await call.message.edit_text(
