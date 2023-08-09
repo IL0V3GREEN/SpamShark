@@ -4,6 +4,7 @@ from aiogram import Router, F, Bot
 from aiogram.types import Message, FSInputFile, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from mongo import Database
 import os
 import asyncio
 import random
@@ -15,6 +16,7 @@ class ParseStates(StatesGroup):
     channel_username = State()
 
 
+db = Database()
 router = Router()
 
 
@@ -48,6 +50,7 @@ async def getting_spam_locate(call: CallbackQuery, state: FSMContext):
 @router.message(ParseStates.chat_username, F.text)
 async def getting_username(message: Message, state: FSMContext, bot: Bot):
     username = message.text
+    db.create_parse_order(message.from_user.id, username)
     app = Client('botik1')
     if "@" not in username and "https" not in username:
         if os.path.exists(f"{username}.txt"):
