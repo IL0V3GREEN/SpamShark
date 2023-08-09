@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import random
 
 
 class Database:
@@ -20,7 +21,9 @@ class Database:
         self.collection.insert_one(
             {
                 'user_id': user_id,
-                'balance': 0
+                'balance': 0,
+                'parse_orders': [],
+                'spam_orders': []
             }
         )
 
@@ -32,3 +35,18 @@ class Database:
             {'user_id': user_id},
             {"$set": string}
         )
+
+    # def create_parse_order(self, user_id):
+    #
+    #     count = len(list(self.collection.find({'user_id': user_id})))
+    #
+    #     self.collection.update_one(
+    #         {'user_id': user_id},
+    #         {
+    #             '$addToSet': {
+    #                 'parse_orders': {
+    #                     f'order_{}'
+    #                 }
+    #             }
+    #         }
+    #     )
