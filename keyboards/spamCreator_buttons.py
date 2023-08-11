@@ -76,6 +76,8 @@ def client_finish_buttons(url: list):
             text=f"{(i.split('-')[0])[:-1]}",
             url=f"{(i.split('-')[1])[1:]}"
         )
+    builder.adjust(1)
+    return builder.as_markup()
 
 
 def admin_spam_start(url: list or None = None):
