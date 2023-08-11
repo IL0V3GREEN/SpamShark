@@ -37,7 +37,7 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
     action = call.data.split("_")[1]
     if action == "deposit":
         await call.message.answer(
-            "🧐 На сколько <b>₽</b> пополняем?\n\n"
+            "🧐 Cколько <b>₽</b> пополняем?\n\n"
             "<i>минимальное пополнение - 100₽</i>"
         )
         await state.set_state(BalanceState.amount)
@@ -53,14 +53,14 @@ async def getting_amount(message: Message, state: FSMContext):
         if amount >= 100:
             await state.update_data(amount=amount)
             await message.answer(
-                f"🧾 <b>Пополнение на {amount}₽</b>\n\n"
+                f"🧾 Пополнение на {amount}₽\n\n"
                 f"<i>*Если хочешь изменить сумму пополнения, "
                 f"просто отправь другое число*</i>\n\n"
                 f"Выбери способ оплаты:",
                 reply_markup=payment_methods()
             )
         else:
-            await message.answer("📛 Минимальное пополнение - <b>100₽</b>")
+            await message.answer("📛 Минимальное пополнение - 100₽")
     except ValueError:
         await message.answer("👨🏻‍🏫 Введи целое число")
 
@@ -76,7 +76,7 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
         bank = check_bank(card)
         await call.message.edit_text(
             f"🏦 <i><b>{bank}</b></i>\n\n"
-            f"Сумма перевода: <b>{data['amount']}₽</b>\n"
+            f"Сумма перевода: {data['amount']}₽\n"
             f"Номер карты: <code>{card}</code>\n\n"
             f"<i>нажми на кнопку после успешного перевода</i>",
             reply_markup=done_transaction(call.from_user.id, data['amount'], bank)
@@ -116,7 +116,7 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
     await call.message.delete()
     await call.message.answer_photo(
         photo=photo,
-        caption=f"Сумма перевода: <b>{amount} {currency}</b>\n\n"
+        caption=f"Сумма перевода: {amount} {currency}\n\n"
                 f"<i>счет действителен в течении 30 минут ⏳</i>",
         reply_markup=crypto_pay_button(
             invoice.pay_url,
@@ -140,7 +140,7 @@ async def approving_cryptopay(call: CallbackQuery):
 
     elif invoice.status == "paid":
         await call.message.delete()
-        await call.message.answer(f"Твой счет пополнен на <b>{amount}₽</b>")
+        await call.message.answer(f"Твой счет пополнен на {amount}₽.")
         db.update_string(
             user_id,
             {'balance': (db.user_info(user_id)['balance'] + amount)}
@@ -159,7 +159,7 @@ async def sending_transaction(call: CallbackQuery, bot: Bot):
     bank = call.data.split("_")[4]
     await call.message.delete()
     await call.message.answer(
-        "<b>Твой перевод обрабатывается</b>\n\n"
+        "Твой перевод обрабатывается. "
         "Среднее время обработки - 15 минут ⏳"
     )
     await bot.send_message(
@@ -180,7 +180,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
     if action == "accept":
         await bot.send_message(
             user_id,
-            f"✅ Твой счет пополнен на <b>{amount}₽</b>"
+            f"Твой счет пополнен на {amount}₽"
         )
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
         await call.message.edit_text(
@@ -191,7 +191,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
     else:
         await bot.send_message(
             user_id,
-            f"🤥 Твой перевод на <b>{amount}₽</b> не прошел.."
+            f"🤥 Твой перевод на {amount}₽ не прошел.."
         )
         await call.message.edit_text(
             f"{user_id}\n"
