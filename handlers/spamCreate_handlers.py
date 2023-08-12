@@ -546,6 +546,7 @@ async def getting_inline_buttons(message: Message, state: FSMContext, bot: Bot):
     if message.text != "Отмена":
         links = message.text.split("\n")
         await state.update_data(inline=links)
+        await message.answer("URL-кнопки добавлены.", reply_markup=ReplyKeyboardRemove())
         if media and text:
             try:
                 await message.answer_photo(
@@ -764,8 +765,6 @@ async def exiting_from_builder(call: CallbackQuery, state: FSMContext):
     await call.message.delete()
     await call.message.answer(
         "🔚 Ты вышел из спам-билдера.\n\n"
-        '<i>Чтобы воспользоваться функциями <b>SpamShark</b> еще раз, нажми кнопку <b>"Меню"</b></i>\n\n',
-        disable_web_page_preview=True
+        '<i>Чтобы воспользоваться функциями <b>SpamShark</b> еще раз, нажми кнопку <b>"Меню"</b></i>\n\n'
     )
     await state.clear()
-
