@@ -58,15 +58,40 @@ class Database:
             }
         )
 
+    def create_spam_order(self, user_id):
+        count = len(self.collection.find_one({'user_id': user_id})['parse_orders'])
+        self.collection.update_one(
+            {'user_id': user_id},
+            {
+                '$addToSet': {
+                    'spam_orders': {
+                        f'order_{count}': {
+                            'date': {
+                                'year': datetime.now(self.tz).strftime("%Y"),
+                                'month': datetime.now(self.tz).strftime("%m"),
+                                'day': datetime.now(self.tz).strftime("%d")
+                            }
+                        }
+                    }
+                }
+            }
+        )
+
     def check_parse_available(self, user_id):
         orders = self.collection.find_one({'user_id': user_id})['parse_orders']
         ord_count = 0
         count = 0
         for i in orders:
-            if i[f'order_{ord_count}']['date']['year'] == datetime.now(self.tz) and \
+            if i[f'order_{ord_count}']['date']['year'] == datetime.now(self.tz).strftime("%Y") and \
                     i[f'order_{ord_count}']['date']['month'] == datetime.now(self.tz).strftime("%m") and \
                     i[f'order_{ord_count}']['date']['day'] == datetime.now(self.tz).strftime("%d"):
                 count += 1
             ord_count += 1
 
-        print(count)
+        if count < 3:
+            return True
+
+        return False
+
+    def get_current_price(self):
+        return self.collection.find_one({'message_price': 'message_price'})['price']
