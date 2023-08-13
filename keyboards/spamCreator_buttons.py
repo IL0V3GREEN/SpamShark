@@ -1,5 +1,9 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
+from mongo import Database
+
+
+db = Database()
 
 
 class EditFactory(CallbackData, prefix="editfab"):
@@ -54,7 +58,7 @@ def edit_sets(text: bool, media: bool, url: bool, theme: str, count: int, url_bu
         callback_data="spambuild_theme"
     )
     builder.button(
-        text=f"Количество сообщений: {count}",
+        text=f"Количество сообщений: {count} ({db.get_current_price() * count}₽)",
         callback_data="spambuild_count"
     )
     builder.button(
@@ -89,7 +93,7 @@ def admin_spam_start(url: list or None = None):
                 url=f"{(i.split('-')[1])[1:]}"
             )
     builder.button(
-        text="😤 Приступить спамить",
+        text="Приступить спамить",
         callback_data="start_spam"
     )
     builder.adjust(1)
