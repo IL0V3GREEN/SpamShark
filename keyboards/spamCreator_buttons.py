@@ -58,7 +58,7 @@ def edit_sets(text: bool, media: bool, url: bool, theme: str, count: int, url_bu
         callback_data="spambuild_theme"
     )
     builder.button(
-        text=f"Количество сообщений: {count} ({db.get_current_price() * count}₽)",
+        text=f"Кол-во сообщений: {count} ({db.get_current_price() * count}₽)",
         callback_data="spambuild_count"
     )
     builder.button(
