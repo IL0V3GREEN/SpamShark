@@ -104,7 +104,7 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
     else:
         await call.message.edit_text(
             "🔢 Выбери количество сообщений.\n\n"
-            "<i>1 сообщение = 1₽</i>",
+            f"<i>1 сообщение = {db.get_current_price()}₽</i>",
             reply_markup=choose_count()
         )
         await state.set_state(UserState.message_count)
@@ -192,7 +192,7 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
     else:
         await call.message.edit_text(
             "📝 Введи свое количество: \n\n"
-            "<i>1 сообщение = 1₽</i>"
+            f"<i>1 сообщение = {db.get_current_price()}₽</i>"
         )
 
 
@@ -635,7 +635,7 @@ async def editing_buttons(call: CallbackQuery, state: FSMContext):
         await call.message.delete()
         await call.message.answer(
             "🔢 Выбери количество сообщений.\n\n"
-            "<i>1 сообщение = 1₽</i>",
+            f"<i>1 сообщение = {db.get_current_price()}₽</i>",
             reply_markup=choose_count()
         )
         await state.set_state(UserState.message_count)
@@ -651,7 +651,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 media=f"{data['media']}",
                 caption=f"{data['text']}\n\n"
                         f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
+                        f"Кол-во сообщений: {data['message_count']} "
+                        f"({db.get_current_price() * data['message_count']}₽)\n\n"
                         f"♻️ <i>Обработка запроса..</i>"
             )
             await call.message.edit_media(
