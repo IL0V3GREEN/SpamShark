@@ -17,7 +17,7 @@ class CounterMiddleware(BaseMiddleware):
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
-        if not db.user_info(event.from_user.id):
+        if not db.user_exists(event.from_user.id):
             db.add_user(event.from_user.id)
 
         return await handler(event, data)
