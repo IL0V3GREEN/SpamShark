@@ -660,7 +660,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 type="photo",
                 media=f"{data['media']}",
                 caption=f"{data['text']}\n\n"
-                        f"--------------------\n"
+                        f"---------------------------------\n"
                         f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
@@ -688,7 +688,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 type="photo",
                 media=f"{data['media']}",
                 caption=f"{data['text']}\n\n"
-                        f"--------------------\n"
+                        f"---------------------------------\n"
                         f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
@@ -710,7 +710,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
         elif callback_data.text and callback_data.url and not callback_data.media:
             await call.message.edit_text(
                 f"{data['text']}\n\n"
-                f"--------------------\n"
+                f"---------------------------------\n"
                 f"<b>#{number}\n\n</b>"
                 f"Аудитория: {data['spam_theme']}\n"
                 f"Кол-во сообщений: {data['message_count']}\n\n"
@@ -776,7 +776,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
         elif callback_data.text and not callback_data.media and not callback_data.url:
             await call.message.edit_text(
                 f"{data['text']}\n\n"
-                f"--------------------\n"
+                f"---------------------------------\n"
                 f"<b>#{number}\n\n</b>"
                 f"Аудитория: {data['spam_theme']}\n"
                 f"Кол-во сообщений: {data['message_count']}\n\n"
