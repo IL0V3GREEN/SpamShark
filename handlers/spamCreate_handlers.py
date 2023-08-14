@@ -664,7 +664,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                         f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
+                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
             )
             await call.message.edit_media(
                 media,
@@ -692,7 +692,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                         f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
+                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
             )
             await call.message.edit_media(media)
             await bot.send_photo(
@@ -714,7 +714,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 f"<b>#{number}\n\n</b>"
                 f"Аудитория: {data['spam_theme']}\n"
                 f"Кол-во сообщений: {data['message_count']}\n\n"
-                f"♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>",
+                f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>",
                 reply_markup=client_finish_buttons(data['inline'])
             )
             await bot.send_message(
@@ -736,7 +736,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 caption=f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
+                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
             )
             await call.message.edit_media(media, reply_markup=data['inline'])
             await bot.send_photo(
@@ -758,7 +758,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 caption=f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
+                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
             )
             await call.message.edit_media(media)
             await bot.send_photo(
@@ -780,7 +780,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 f"<b>#{number}\n\n</b>"
                 f"Аудитория: {data['spam_theme']}\n"
                 f"Кол-во сообщений: {data['message_count']}\n\n"
-                f"♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
+                f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>"
             )
             await bot.send_message(
                 6364771832,
