@@ -10,6 +10,8 @@ class Database:
         )
         self.db = self.client.get_database('spamshark')
         self.collection = self.db.get_collection('users')
+        self.db2 = self.client.get_database('spamshark')
+        self.orders = self.db.get_collection('orders')
         self.tz = pytz.timezone("Europe/Moscow")
 
     def user_exists(self, user_id):
@@ -23,9 +25,7 @@ class Database:
         self.collection.insert_one(
             {
                 'user_id': user_id,
-                'balance': 0,
-                'parse_orders': [],
-                'spam_orders': []
+                'balance': 0
             }
         )
 
@@ -38,60 +38,20 @@ class Database:
             {"$set": string}
         )
 
-    def create_parse_order(self, user_id, username):
-        count = len(self.collection.find_one({'user_id': user_id})['parse_orders'])
-        self.collection.update_one(
-            {'user_id': user_id},
+    def create_spam_order(self, order_uid, user_id, value, theme):
+        self.orders.insert_one(
             {
-                '$addToSet': {
-                    'parse_orders': {
-                        f'order_{count}': {
-                            'date': {
-                                'year': datetime.now(self.tz).strftime("%Y"),
-                                'month': datetime.now(self.tz).strftime("%m"),
-                                'day': datetime.now(self.tz).strftime("%d")
-                            },
-                            'username': username
-                        }
-                    }
+                'order_uid': order_uid,
+                'user_id': user_id,
+                'messages': value,
+                'theme': theme,
+                'date': {
+                    'year': datetime.now(self.tz).strftime("%Y"),
+                    'month': datetime.now(self.tz).strftime("%m"),
+                    'day': datetime.now(self.tz).strftime("%d")
                 }
             }
         )
 
-    def create_spam_order(self, user_id):
-        count = len(self.collection.find_one({'user_id': user_id})['parse_orders'])
-        self.collection.update_one(
-            {'user_id': user_id},
-            {
-                '$addToSet': {
-                    'spam_orders': {
-                        f'order_{count}': {
-                            'date': {
-                                'year': datetime.now(self.tz).strftime("%Y"),
-                                'month': datetime.now(self.tz).strftime("%m"),
-                                'day': datetime.now(self.tz).strftime("%d")
-                            }
-                        }
-                    }
-                }
-            }
-        )
-
-    def check_parse_available(self, user_id):
-        orders = self.collection.find_one({'user_id': user_id})['parse_orders']
-        ord_count = 0
-        count = 0
-        for i in orders:
-            if i[f'order_{ord_count}']['date']['year'] == datetime.now(self.tz).strftime("%Y") and \
-                    i[f'order_{ord_count}']['date']['month'] == datetime.now(self.tz).strftime("%m") and \
-                    i[f'order_{ord_count}']['date']['day'] == datetime.now(self.tz).strftime("%d"):
-                count += 1
-            ord_count += 1
-
-        if count < 3:
-            return True
-
-        return False
-
-    def get_current_price(self):
+    def get_current_price(self) -> float:
         return self.collection.find_one({'message_price': 'message_price'})['price']
