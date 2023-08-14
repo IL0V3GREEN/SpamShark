@@ -829,7 +829,7 @@ async def exiting_from_builder(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("startspam"))
 async def starting_spam(call: CallbackQuery, bot: Bot):
     user_id = int(call.data.split("_")[1])
-    message_id = int(call.data.split("_")[2])
+    message_id = int(call.data.split("_")[2]) + 1
     order_id = int(call.data.split("_")[3])
     order = db.get_order_info(order_id)
     await call.message.edit_reply_markup(reply_markup=admin_spam_end(user_id, call.message.message_id, order_id))
