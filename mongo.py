@@ -53,5 +53,8 @@ class Database:
             }
         )
 
+    def get_order_info(self, order_uid):
+        return self.orders.find_one({'order_uid': order_uid})
+
     def get_current_price(self) -> float:
         return self.collection.find_one({'message_price': 'message_price'})['price']
