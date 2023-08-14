@@ -371,7 +371,7 @@ async def getting_text(message: Message, state: FSMContext):
 
 @router.message(UserState.client_text, F.text)
 async def getting_text(message: Message, state: FSMContext):
-    if message.text != "balance" or message.text != "parse" or message.text != "spam":
+    if message.text not in ['/balance', '/spam', '/parse']:
         data = await state.get_data()
 
         media = await check_media(data)
