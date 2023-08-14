@@ -678,7 +678,6 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                         f"Кол-во сообщений: {data['message_count']}\n\n",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
-                    call.message.message_id,
                     number,
                     data['inline'])
             )
@@ -703,8 +702,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                         f"Кол-во сообщений: {data['message_count']}\n\n",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
-                    call.message.message_id,
-                    number)
+                    number
+                )
             )
 
         elif callback_data.text and callback_data.url and not callback_data.media:
@@ -724,7 +723,6 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 f"Кол-во сообщений: {data['message_count']}\n\n",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
-                    call.message.message_id,
                     number,
                     data['inline'])
             )
@@ -746,7 +744,6 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                         f"Кол-во сообщений: {data['message_count']}\n\n",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
-                    call.message.message_id,
                     number,
                     data['inline'])
             )
@@ -768,7 +765,6 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                         f"Кол-во сообщений: {data['message_count']}\n\n",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
-                    call.message.message_id,
                     number
                 )
             )
@@ -816,12 +812,10 @@ async def exiting_from_builder(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("startspam"))
 async def starting_spam(call: CallbackQuery, bot: Bot):
     user_id = int(call.data.split("_")[1])
-    message_id = int(call.data.split("_")[2]) + 1
     order_id = int(call.data.split("_")[3])
     order = db.get_order_info(order_id)
     await call.message.edit_reply_markup(reply_markup=admin_spam_end(user_id, call.message.message_id, order_id))
 
-    await bot.delete_message(user_id, message_id)
     await bot.send_message(
         user_id,
         f"<b>#{order_id}\n\n</b>"
