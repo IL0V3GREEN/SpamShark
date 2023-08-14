@@ -705,8 +705,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     call.message.message_id,
-                    number,
-                    data['inline'])
+                    number)
             )
 
         elif callback_data.text and callback_data.url and not callback_data.media:
@@ -775,8 +774,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     call.message.message_id,
-                    number,
-                    data['inline'])
+                    number
+                )
             )
 
         elif callback_data.text and not callback_data.media and not callback_data.url:
@@ -797,8 +796,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     call.message.message_id,
-                    number,
-                    data['inline'])
+                    number
+                )
             )
 
         await state.clear()
