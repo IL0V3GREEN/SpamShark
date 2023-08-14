@@ -84,7 +84,7 @@ def client_finish_buttons(url: list):
     return builder.as_markup()
 
 
-def admin_spam_start(url: list or None = None):
+def admin_spam_start(user_id, message_id, order_uid, url: list or None = None):
     builder = InlineKeyboardBuilder()
     if url is not None:
         for i in url:
@@ -94,7 +94,7 @@ def admin_spam_start(url: list or None = None):
             )
     builder.button(
         text="Приступить спамить",
-        callback_data="start_spam"
+        callback_data=f"startspam_{user_id}_{message_id}_{order_uid}"
     )
     builder.adjust(1)
     return builder.as_markup()
@@ -132,7 +132,7 @@ def choose_theme():
     )
     builder.button(
         text="➡️ Skip",
-        callback_data="spamtype_skip"
+        callback_data="spamtype_skipped"
     )
     builder.adjust(1)
     return builder.as_markup()
