@@ -371,8 +371,9 @@ async def getting_text(message: Message, state: FSMContext):
 
 @router.message(UserState.client_text, F.text)
 async def getting_text(message: Message, state: FSMContext):
-    if message.text != "/balance" or message.text != "/parse" or message.text != "spam":
+    if message.text != "balance" or message.text != "parse" or message.text != "spam":
         data = await state.get_data()
+
         media = await check_media(data)
         buttons = await check_inline(data)
 
@@ -651,8 +652,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 media=f"{data['media']}",
                 caption=f"{data['text']}\n\n"
                         f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']} "
-                        f"({db.get_current_price() * data['message_count']}₽)\n\n"
+                        f"Кол-во сообщений: {data['message_count']}\n\n"
                         f"♻️ <i>Обработка запроса..</i>"
             )
             await call.message.edit_media(
