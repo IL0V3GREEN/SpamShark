@@ -682,7 +682,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 photo=data['media'],
                 caption=f"{data['text']}\n\n"
                         f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n",
+                        f"Кол-во сообщений: {data['message_count']}\n"
+                        f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     number,
@@ -706,7 +707,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 photo=data['media'],
                 caption=f"{data['text']}\n\n"
                         f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n",
+                        f"Кол-во сообщений: {data['message_count']}\n"
+                        f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     number
@@ -727,7 +729,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 6364771832,
                 f"{data['text']}\n\n"
                 f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n\n",
+                f"Кол-во сообщений: {data['message_count']}\n"
+                f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     number,
@@ -749,7 +752,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 chat_id=6364771832,
                 photo=data['media'],
                 caption=f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n",
+                        f"Кол-во сообщений: {data['message_count']}\n"
+                        f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     number,
@@ -772,7 +776,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 caption=f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n",
+                        f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     number
@@ -792,13 +796,13 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 6364771832,
                 f"{data['text']}\n\n"
                 f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n",
+                f"Кол-во сообщений: {data['message_count']}\n"
+                f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
                     number
                 )
             )
-        print(call.message.message_id)
 
         await state.clear()
 
@@ -825,10 +829,6 @@ async def starting_spam(call: CallbackQuery, bot: Bot):
     order_id = int(call.data.split("_")[2])
     order = db.get_order_info(order_id)
     await call.message.edit_reply_markup(reply_markup=admin_spam_end())
-    await call.message.answer(
-        f"<b>#{order_id}\n\n</b>"
-        f"message_id: <code>{call.message.message_id + 1}</code>"
-    )
 
     await bot.send_message(
         user_id,
@@ -842,4 +842,4 @@ async def starting_spam(call: CallbackQuery, bot: Bot):
 
 @router.callback_query(F.data == "endSpam")
 async def end_spamming(call: CallbackQuery):
-    print(call.message.message_id)
+    await call.message.delete()
