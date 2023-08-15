@@ -28,7 +28,7 @@ def main():
     dp.include_router(start_handler.router)
     dp.include_router(spamCreate_handlers.router)
     dp.include_router(parsing_handlers.router)
-    dp.include_router(balance_handlers.router)
+    dp.include_router(profile_handlers.router)
     dp.startup.register(on_startup)
 
     app = web.Application()
