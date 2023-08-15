@@ -837,7 +837,6 @@ async def starting_spam(call: CallbackQuery, bot: Bot):
         f"Кол-во сообщений: {order['messages']}\n\n"
         f"📬 Идет спам-рассылка.. 0%"
     )
-    await asyncio.sleep(5)
 
 
 @router.callback_query(F.data == "endSpam")
