@@ -205,80 +205,84 @@ async def getting_self_count(message: Message, state: FSMContext):
         count = message.text
         try:
             count = int(count)
-            await state.update_data(message_count=count)
-            data = await state.get_data()
+            if count <= 10000:
+                await state.update_data(message_count=count)
+                data = await state.get_data()
 
-            text = await check_text(data)
-            media = await check_media(data)
-            buttons = await check_inline(data)
+                text = await check_text(data)
+                media = await check_media(data)
+                buttons = await check_inline(data)
 
-            # text & media & buttons
-            if text and media and buttons:
-                await message.delete()
-                await message.answer_photo(
-                    photo=data['media'],
-                    caption=data['text'],
-                    reply_markup=edit_sets(
-                        True, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                # text & media & buttons
+                if text and media and buttons:
+                    await message.delete()
+                    await message.answer_photo(
+                        photo=data['media'],
+                        caption=data['text'],
+                        reply_markup=edit_sets(
+                            True, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                        )
                     )
-                )
-                await state.set_state(UserState.client_text)
-            # text & media
-            elif text and media and not buttons:
-                await message.delete()
-                await message.answer_photo(
-                    photo=data['media'],
-                    caption=data['text'],
-                    reply_markup=edit_sets(
-                        True, True, False, data['spam_theme'], data['message_count']
+                    await state.set_state(UserState.client_text)
+                # text & media
+                elif text and media and not buttons:
+                    await message.delete()
+                    await message.answer_photo(
+                        photo=data['media'],
+                        caption=data['text'],
+                        reply_markup=edit_sets(
+                            True, True, False, data['spam_theme'], data['message_count']
+                        )
                     )
-                )
-                await state.set_state(UserState.client_text)
-            # text & buttons
-            elif text and buttons and not media:
-                await message.edit_text(
-                    data['text'],
-                    reply_markup=edit_sets(
-                        True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    await state.set_state(UserState.client_text)
+                # text & buttons
+                elif text and buttons and not media:
+                    await message.edit_text(
+                        data['text'],
+                        reply_markup=edit_sets(
+                            True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                        )
                     )
-                )
-                await state.set_state(UserState.client_text)
-            # media & buttons
-            elif media and buttons and not text:
-                await message.delete()
-                await message.answer_photo(
-                    photo=data['media'],
-                    reply_markup=edit_sets(
-                        False, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    await state.set_state(UserState.client_text)
+                # media & buttons
+                elif media and buttons and not text:
+                    await message.delete()
+                    await message.answer_photo(
+                        photo=data['media'],
+                        reply_markup=edit_sets(
+                            False, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                        )
                     )
-                )
-                await state.set_state(UserState.client_text)
-            # just media
-            elif media and not text and not buttons:
-                await message.delete()
-                await message.answer_photo(
-                    photo=data['media'],
-                    reply_markup=edit_sets(
-                        False, True, False, data['spam_theme'], data['message_count']
+                    await state.set_state(UserState.client_text)
+                # just media
+                elif media and not text and not buttons:
+                    await message.delete()
+                    await message.answer_photo(
+                        photo=data['media'],
+                        reply_markup=edit_sets(
+                            False, True, False, data['spam_theme'], data['message_count']
+                        )
                     )
-                )
-                await state.set_state(UserState.client_text)
-            # just text
-            elif text and not buttons and not media:
-                await message.edit_text(
-                    data['text'],
-                    reply_markup=edit_sets(
-                        True, False, False, data['spam_theme'], data['message_count']
+                    await state.set_state(UserState.client_text)
+                # just text
+                elif text and not buttons and not media:
+                    await message.edit_text(
+                        data['text'],
+                        reply_markup=edit_sets(
+                            True, False, False, data['spam_theme'], data['message_count']
+                        )
                     )
-                )
-                await state.set_state(UserState.client_text)
+                    await state.set_state(UserState.client_text)
 
+                else:
+                    await message.answer(
+                        "Отправь боту то, что будет рассылаться пользователям.\n"
+                        "Это может быть все, что угодно - текст, фото"
+                    )
+                    await state.set_state(UserState.client_text)
             else:
-                await message.answer(
-                    "Отправь боту то, что будет рассылаться пользователям.\n"
-                    "Это может быть все, что угодно - текст, фото"
-                )
-                await state.set_state(UserState.client_text)
+                await message.answer("📛 Максимальное значение - 10.000")
+
         except ValueError:
             await message.answer(
                 "📛 Введи корректное значение."
