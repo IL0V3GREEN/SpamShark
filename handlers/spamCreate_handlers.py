@@ -798,6 +798,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     number
                 )
             )
+        print(call.message.message_id)
 
         await state.clear()
 
@@ -824,6 +825,10 @@ async def starting_spam(call: CallbackQuery, bot: Bot):
     order_id = int(call.data.split("_")[2])
     order = db.get_order_info(order_id)
     await call.message.edit_reply_markup(reply_markup=admin_spam_end())
+    await call.message.answer(
+        f"<b>#{order_id}\n\n</b>"
+        f"message_id: <code>{call.message.message_id + 1}</code>"
+    )
 
     await bot.send_message(
         user_id,
@@ -833,7 +838,6 @@ async def starting_spam(call: CallbackQuery, bot: Bot):
         f"📬 Идет спам-рассылка.. 0%"
     )
     await asyncio.sleep(5)
-    await bot.delete_message(user_id, call.message.message_id + 1)
 
 
 @router.callback_query(F.data == "endSpam")
