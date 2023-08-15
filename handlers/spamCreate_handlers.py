@@ -833,7 +833,7 @@ async def starting_spam(call: CallbackQuery, bot: Bot):
         f"📬 Идет спам-рассылка.. 0%"
     )
     await asyncio.sleep(5)
-    await bot.delete_message(call.message.chat.id, call.message.message_id + 1)
+    await bot.delete_message(user_id, call.message.message_id + 1)
 
 
 @router.callback_query(F.data == "endSpam")
