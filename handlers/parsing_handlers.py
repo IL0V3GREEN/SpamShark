@@ -6,8 +6,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from mongo import Database
 import os
-import asyncio
-import random
 from keyboards.parse_buttons import where_parsing
 
 
@@ -49,33 +47,17 @@ async def getting_spam_locate(call: CallbackQuery, state: FSMContext):
 @router.message(ParseStates.chat_username, F.text)
 async def getting_username(message: Message, state: FSMContext, bot: Bot):
     username = message.text
-    app = Client('botik1')
+    app = Client('parse', 23474509, "087d8368b34304fa5a4510dbdb6dcdcb")
     if "@" not in username and "https" not in username and "t.me/" not in username:
         if os.path.exists(f"{username}.txt"):
             os.remove(f"{username}.txt")
 
-        animation_count = 0
-        await message.answer(
-            "♨️ Подготовка...\n\n"
-            f"{animation_count}%"
-        )
         file = open(f"{username}.txt", "w+")
         async with app:
             async for member in app.get_chat_members(username):
                 if not member.user.is_bot and member.user.username is not None:
                     file.write(f"{member.user.username}\n")
 
-            while animation_count <= 90:
-                animation_count += random.randint(6, 9)
-                await bot.edit_message_text(
-                    f"🩻\n\n"
-                    f"{animation_count}%",
-                    message.chat.id,
-                    message.message_id + 1
-                )
-                await asyncio.sleep(2)
-
-            await bot.delete_message(message.chat.id, message.message_id + 1)
             file.close()
             doc_txt = FSInputFile(f"{username}.txt")
             count = await app.get_chat_members_count(username)
