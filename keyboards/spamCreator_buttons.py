@@ -100,11 +100,11 @@ def admin_spam_start(user_id, order_uid, url: list or None = None):
     return builder.as_markup()
 
 
-def admin_spam_end(user_id, message_id, order_uid):
+def admin_spam_end():
     builder = InlineKeyboardBuilder()
     builder.button(
         text="Спам-рассылка завершена",
-        callback_data=f"endSpam_{user_id}_{message_id}_{order_uid}"
+        callback_data=f"endSpam"
     )
     return builder.as_markup()
 
