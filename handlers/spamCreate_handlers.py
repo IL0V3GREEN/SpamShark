@@ -1,5 +1,3 @@
-import asyncio
-
 from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery, InputMedia, ReplyKeyboardRemove
 from aiogram.fsm.state import State, StatesGroup
@@ -680,9 +678,11 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
             await bot.send_photo(
                 chat_id=6364771832,
                 photo=data['media'],
-                caption=f"{data['text']}\n\n"
+                caption=f"{data['text']}\n"
+                        f"-----------------------------------\n"
+                        f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n"
+                        f"Кол-во сообщений: {data['message_count']}\n\n"
                         f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
@@ -705,9 +705,11 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
             await bot.send_photo(
                 chat_id=6364771832,
                 photo=data['media'],
-                caption=f"{data['text']}\n\n"
+                caption=f"{data['text']}\n"
+                        f"-----------------------------------\n"
+                        f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n"
+                        f"Кол-во сообщений: {data['message_count']}\n\n"
                         f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
@@ -727,9 +729,11 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
             )
             await bot.send_message(
                 6364771832,
-                f"{data['text']}\n\n"
+                f"{data['text']}\n"
+                f"-----------------------------------\n"
+                f"<b>#{number}\n\n</b>"
                 f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n"
+                f"Кол-во сообщений: {data['message_count']}\n\n"
                 f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
@@ -741,8 +745,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
             media = InputMedia(
                 type="photo",
                 media=f"{data['media']}",
-                caption=f"-----------------------------------\n"
-                        f"<b>#{number}\n\n</b>"
+                caption=f"<b>#{number}\n\n</b>"
                         f"Аудитория: {data['spam_theme']}\n"
                         f"Кол-во сообщений: {data['message_count']}\n\n"
                         f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
@@ -751,8 +754,9 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
             await bot.send_photo(
                 chat_id=6364771832,
                 photo=data['media'],
-                caption=f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n"
+                caption=f"<b>#{number}\n\n</b>"
+                        f"Аудитория: {data['spam_theme']}\n"
+                        f"Кол-во сообщений: {data['message_count']}\n\n"
                         f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
@@ -794,9 +798,11 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
             )
             await bot.send_message(
                 6364771832,
-                f"{data['text']}\n\n"
+                f"{data['text']}\n"
+                f"-----------------------------------\n"
+                f"<b>#{number}\n\n</b>"
                 f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n"
+                f"Кол-во сообщений: {data['message_count']}\n\n"
                 f"message_id: <code>{call.message.message_id + 2}</code>",
                 reply_markup=admin_spam_start(
                     call.from_user.id,
