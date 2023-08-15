@@ -7,10 +7,6 @@ def deposit_menu():
         text="Пополнить",
         callback_data="balance_deposit"
     )
-    builder.button(
-        text="Реферальная система",
-        callback_data="balance_ref"
-    )
     builder.adjust(1)
     return builder.as_markup()
 

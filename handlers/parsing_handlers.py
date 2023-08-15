@@ -55,8 +55,11 @@ async def getting_username(message: Message, state: FSMContext, bot: Bot):
         file = open(f"{username}.txt", "w+")
         async with app:
             async for member in app.get_chat_members(username):
-                if not member.user.is_bot and member.user.username is not None:
+                if not member.user.is_bot and member.user.username is not None and member.user.last_online_date:
                     file.write(f"{member.user.username}\n")
+
+            await message.answer("⏳ Wait 30 seconds..")
+            await bot.delete_message(message.chat.id, message.message_id + 1)
 
             file.close()
             doc_txt = FSInputFile(f"{username}.txt")

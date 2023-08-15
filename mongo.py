@@ -53,6 +53,9 @@ class Database:
             }
         )
 
+    def count_referrals(self, user_id):
+        return len(list(self.collection.find({'ref_id': user_id})))
+
     def get_order_info(self, order_uid):
         return self.orders.find_one({'order_uid': order_uid})
 

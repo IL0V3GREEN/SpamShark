@@ -4,6 +4,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
+
+from keyboards.balance_buttons import deposit_menu
 from keyboards.spamCreator_buttons import edit_sets, EditFactory, admin_spam_start, client_finish_buttons, \
     choose_theme, choose_count, admin_spam_end
 from utils.check_state import check_text, check_media, check_inline
@@ -199,7 +201,7 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
 
 @router.message(UserState.message_count, F.text)
 async def getting_self_count(message: Message, state: FSMContext):
-    if message.text != "/balance" or message.text != "/parse" or message.text != "spam":
+    if message.text != "/profile":
         count = message.text
         try:
             count = int(count)
@@ -287,7 +289,17 @@ async def getting_self_count(message: Message, state: FSMContext):
             )
 
     else:
-        await message.answer("Ты вышел из спам-билдера. Введи команду еще раз")
+        await message.answer("🔚 Ты вышел из спам-билдера.")
+        await message.answer(
+            f"🥷🏻<b>Твой профиль!</b>\n"
+            f"├ 🆔<b>ID:</b> <code>{message.from_user.id}</code>"
+            f"└ 💎<b>Баланс:</b> {db.user_info(message.from_user.id)['balance']:.2f}₽\n\n"
+            f"🤝<b>Реферальная система:</b>"
+            f"├ 👥<b>Рефералы:</b> \n"
+            f"├ 🧊<b>Профит с рефералов:</b> 10%\n"
+            f"└ 📎<b>Ссылка:</b> <code>https://t.me/spamsharkbot?start=ref_{message.from_user.id}</code>",
+            reply_markup=deposit_menu()
+        )
         await state.clear()
 
 
@@ -376,7 +388,7 @@ async def getting_text(message: Message, state: FSMContext):
 
 @router.message(UserState.client_text, F.text)
 async def getting_text(message: Message, state: FSMContext):
-    if message.text not in ['/balance', '/spam', '/parse']:
+    if message.text != '/profile':
         data = await state.get_data()
 
         media = await check_media(data)
@@ -420,7 +432,17 @@ async def getting_text(message: Message, state: FSMContext):
             await state.update_data(text=message.text)
 
     else:
-        await message.answer("Ты вышел из спам-билдера. Введи команду еще раз")
+        await message.answer("🔚 Ты вышел из спам-билдера.")
+        await message.answer(
+            f"🥷🏻<b>Твой профиль!</b>\n"
+            f"├ 🆔<b>ID:</b> <code>{message.from_user.id}</code>"
+            f"└ 💎<b>Баланс:</b> {db.user_info(message.from_user.id)['balance']:.2f}₽\n\n"
+            f"🤝<b>Реферальная система:</b>"
+            f"├ 👥<b>Рефералы:</b> \n"
+            f"├ 🧊<b>Профит с рефералов:</b> 10%\n"
+            f"└ 📎<b>Ссылка:</b> <code>https://t.me/spamsharkbot?start=ref_{message.from_user.id}</code>",
+            reply_markup=deposit_menu()
+        )
         await state.clear()
 
 
@@ -815,7 +837,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
     else:
         await call.message.answer(
             f"📛 На твоем счету недостаточно средств.\n\n"
-            f"Пополни баланс - /balance или измени количество сообщений."
+            f"Пополни баланс - /profile или измени количество сообщений."
         )
 
 

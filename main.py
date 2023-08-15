@@ -1,5 +1,4 @@
-from handlers import start_handler, spamCreate_handlers, parsing_handlers, balance_handlers
-from middlewares.add_user_middleware import CounterMiddleware
+from handlers import start_handler, spamCreate_handlers, parsing_handlers, profile_handlers
 import logging
 from aiogram import Bot, Dispatcher
 from aiohttp import web
@@ -26,7 +25,6 @@ def main():
     bot_settings = {"session": session, "parse_mode": "HTML"}
     bot = Bot(token=MAIN_BOT_TOKEN, **bot_settings)
     dp = Dispatcher()
-    dp.message.outer_middleware.register(CounterMiddleware())
     dp.include_router(start_handler.router)
     dp.include_router(spamCreate_handlers.router)
     dp.include_router(parsing_handlers.router)
