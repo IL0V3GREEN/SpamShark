@@ -25,9 +25,9 @@ class BalanceState(StatesGroup):
 async def balance_menu(message: Message, state: FSMContext):
     await message.answer(
         f"🥷🏻<b>Твой профиль!</b>\n"
-        f"├ 🆔<b>ID:</b> <code>{message.from_user.id}</code>"
+        f"├ 🆔<b>ID:</b> <code>{message.from_user.id}</code>\n"
         f"└ 💎<b>Баланс:</b> {db.user_info(message.from_user.id)['balance']:.2f}₽\n\n"
-        f"🤝<b>Реферальная система:</b>"
+        f"🤝<b>Реферальная система:</b>\n"
         f"├ 👥<b>Рефералы:</b> {db.count_referrals(message.from_user.id)}\n"
         f"├ 🧊<b>Профит с рефералов:</b> 10%\n"
         f"└ 📎<b>Ссылка:</b> <code>https://t.me/spamsharkbot?start=ref_{message.from_user.id}</code>",

@@ -28,9 +28,8 @@ async def start_handle(message: Message, state: FSMContext):
         await message.answer_sticker("CAACAgIAAxkBAAEKCRxk2__X8I1sEWoCtF30MhfGaPPsVgACJxwAAtqDAAFKAAG1a2gCHgiTMAQ")
         await asyncio.sleep(1)
         await message.answer(
-            f"🦈 <b>SpamShark</b>\n\n"
             "📩 Многопоточная <a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылка</b></a> разошлет "
-            "юзерам все, что тебе угодно!\n\n"
+            "пользователям все, что тебе угодно!\n\n"
             '⚡️ Чтобы начать пользоваться ботом, нажми кнопку <b>"Меню"</b>'
         )
 
@@ -38,7 +37,6 @@ async def start_handle(message: Message, state: FSMContext):
         await message.answer_sticker("CAACAgIAAxkBAAEKCRxk2__X8I1sEWoCtF30MhfGaPPsVgACJxwAAtqDAAFKAAG1a2gCHgiTMAQ")
         await asyncio.sleep(1)
         await message.answer(
-            f"🦈 <b>SpamShark</b>\n\n"
             "📩 Многопоточная <a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылка</b></a> разошлет "
             "юзерам все, что тебе угодно!\n\n"
             '⚡️ Чтобы начать пользоваться ботом, нажми кнопку <b>"Меню"</b>'
