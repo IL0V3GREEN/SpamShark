@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 
@@ -10,7 +10,6 @@ class Database:
         )
         self.db = self.client.get_database('spamshark')
         self.collection = self.db.get_collection('users')
-        self.db2 = self.client.get_database('spamshark')
         self.orders = self.db.get_collection('orders')
         self.tz = pytz.timezone("Europe/Moscow")
 
@@ -25,7 +24,8 @@ class Database:
         self.collection.insert_one(
             {
                 'user_id': user_id,
-                'balance': 0
+                'balance': 0,
+                'rating': 0
             }
         )
 
@@ -38,7 +38,7 @@ class Database:
             {"$set": string}
         )
 
-    def create_spam_order(self, order_uid, user_id, value, theme):
+    def create_spam_order(self, order_uid, user_id, value: int, theme):
         self.orders.insert_one(
             {
                 'order_uid': order_uid,
@@ -52,6 +52,58 @@ class Database:
                 }
             }
         )
+
+    def count_today(self, user_id) -> len:
+        orders = list(self.orders.find({'user_id': user_id}))
+        today_orders = []
+        for order in orders:
+            if order['date']['year'] == datetime.now(self.tz).strftime("%Y") and \
+                    order['date']['month'] == datetime.now(self.tz).strftime("%m") and \
+                    order['date']['day'] == datetime.now(self.tz).strftime("%d"):
+                today_orders.append(order)
+
+        return len(today_orders)
+
+    def count_week(self, user_id) -> len:
+        today = int(datetime.now(self.tz).timestamp())
+        time_7_day_before = int((datetime.now(self.tz) - timedelta(days=7)).timestamp())
+        orders = list(self.orders.find({'user_id': user_id}))
+        week_orders = []
+        for order in orders:
+            order_time = datetime(
+                int(order['date']['year']),
+                int(order['date']['month']),
+                int(order['date']['day'])
+            ).timestamp()
+
+            if order_time in range(time_7_day_before, today):
+                week_orders.append(order)
+
+        return len(week_orders)
+
+    def count_month(self, user_id) -> len:
+        today = int(datetime.now(self.tz).timestamp())
+        time_30_day_before = int((datetime.now(self.tz) - timedelta(days=30)).timestamp())
+        orders = list(self.orders.find({'user_id': user_id}))
+        month_orders = []
+        for order in orders:
+            order_time = datetime(
+                int(order['date']['year']),
+                int(order['date']['month']),
+                int(order['date']['day'])
+            ).timestamp()
+
+            if order_time in range(time_30_day_before, today):
+                month_orders.append(order)
+
+        return len(month_orders)
+
+    def count_all_messages(self, user_id) -> int:
+        orders = list(self.orders.find({'user_id': user_id}))
+        messages = 0
+        for order in orders:
+            messages += order['messages']
+        return messages
 
     def count_referrals(self, user_id):
         return len(list(self.collection.find({'ref_id': user_id})))

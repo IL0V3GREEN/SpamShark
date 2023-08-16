@@ -1,14 +1,14 @@
-
 import random
 from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
-from keyboards.balance_buttons import deposit_menu, payment_methods, \
+from keyboards.profile_buttons import deposit_menu, payment_methods, \
     done_transaction, approving_pay, cryptopay_panel, crypto_pay_button
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from mongo import Database
 from utils.bank_type import check_bank
+from utils.profille_functions import get_ref_percent, get_rate_status
 from aiocryptopay import AioCryptoPay, Networks
 
 
@@ -19,19 +19,28 @@ router = Router()
 
 class BalanceState(StatesGroup):
     amount = State()
+    requisites = State()
 
 
 @router.message(Command(commands="profile"))
 async def balance_menu(message: Message, state: FSMContext):
     await message.answer(
-        f"🥷🏻<b>Твой профиль!</b>\n"
-        f"├ 🆔<b>ID:</b> <code>{message.from_user.id}</code>\n"
-        f"└ 💎<b>Баланс:</b> {db.user_info(message.from_user.id)['balance']:.2f}₽\n\n"
-        f"🤝<b>Реферальная система:</b>\n"
-        f"├ 👥<b>Рефералы:</b> {db.count_referrals(message.from_user.id)}\n"
-        f"├ 🧊<b>Профит с рефералов:</b> 10%\n"
-        f"└ 📎<b>Ссылка:</b> <code>https://t.me/spamsharkbot?start=ref_{message.from_user.id}</code>",
-        reply_markup=deposit_menu()
+        f"🥷🏻 <b>Твой профиль!</b>\n"
+        f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
+        f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(message.from_user.id)['balance']:.1f}</code>₽\n\n"
+        f"📦 <b>Заказы</b>\n"
+        f"├ <b>Сегодня:</b> <code>{db.count_today(message.from_user.id)}</code>\n"
+        f"├ <b>За 7 дней:</b> <code>{db.count_week(message.from_user.id)}</code>\n"
+        f"├ <b>За 30 дней:</b> <code>{db.count_month(message.from_user.id)}</code>\n"
+        f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
+        f"└ 📬 <b>Сообщений отправлено:</b>\n\n"
+        f"💥 <b>Рейтинг</b>\n\n"
+        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
+        f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
+        f"🤝 <b>Реферальная система</b>\n"
+        f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
+        f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>%",
+        reply_markup=deposit_menu(message.from_user.id)
     )
     await state.clear()
 
@@ -117,7 +126,7 @@ async def crypto_payment(call: CallbackQuery, state: FSMContext):
     await call.message.delete()
     await call.message.answer_photo(
         photo=photo,
-        caption=f"Сумма перевода: {amount} {currency}\n\n"
+        caption=f"<b>Сумма перевода:</b> <code>{amount} {currency}</code>\n\n"
                 f"<i>счет действителен в течении 30 минут ⏳</i>",
         reply_markup=crypto_pay_button(
             invoice.pay_url,
@@ -137,28 +146,27 @@ async def approving_cryptopay(call: CallbackQuery):
     amount = int(call.data.split("_")[3])
     invoice = await crypto.get_invoices(invoice_ids=invoice_id)
     if invoice.status == "active":
-        await call.message.answer("🤥 Ты не оплатил счет..")
+        await call.message.answer("🤥 <b>Ты не оплатил счет..</b>")
 
     elif invoice.status == "paid":
         await call.message.delete()
-        await call.message.answer(f"✅ Счет успешно пополнен на {amount}₽.")
-        db.update_string(
-            user_id,
-            {'balance': (db.user_info(user_id)['balance'] + amount)}
-        )
+        await call.message.answer(f"<b>✅ Счет успешно пополнен на</b> <code>{amount}₽</code>")
+        db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
+        db.update_string(user_id, {'rating': (db.user_info(user_id)['rating'] + 1)})
 
         try:
             ref_id = db.user_info(user_id)['ref_id']
+            award = ((amount / 100) * get_ref_percent(db.user_info(ref_id)['rating']))
             db.update_string(
                 ref_id,
-                {'balance': (db.user_info(ref_id)['balance'] + (amount * 0.1))}
+                {'balance': (db.user_info(ref_id)['balance'] + award)}
             )
         except KeyError:
             pass
 
     elif invoice.status == "expired":
         await call.message.delete()
-        await call.message.answer("⌛️ Истек срок действия счета.")
+        await call.message.answer("⌛️ <b>Истек срок действия счета.</b>")
 
 
 # sending transaction to admin
@@ -168,8 +176,8 @@ async def sending_transaction(call: CallbackQuery, bot: Bot):
     amount = int(call.data.split("_")[3])
     bank = call.data.split("_")[4]
     await call.message.edit_text(
-        "Перевод обрабатывается.\n\n"
-        "Среднее время обработки - 15 минут ⏳"
+        "<b>Перевод обрабатывается.\n\n"
+        "Среднее время обработки -</b> <code>15 минут ⏳</code>"
     )
     await bot.send_message(
         6364771832,
@@ -189,9 +197,10 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
     if action == "accept":
         await bot.send_message(
             user_id,
-            f"✅ Счет успешно пополнен на {amount}₽"
+            f"✅ <b>Счет успешно пополнен на</b> <code>{amount}₽</code>"
         )
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
+        db.update_string(user_id, {'rating': (db.user_info(user_id)['rating'] + 1)})
         await call.message.edit_text(
             f"{user_id}\n"
             f"{amount}₽\n\n"
@@ -200,17 +209,19 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
 
         try:
             ref_id = db.user_info(user_id)['ref_id']
+            award = ((amount / 100) * get_ref_percent(db.user_info(ref_id)['rating']))
             db.update_string(
                 ref_id,
-                {'balance': (db.user_info(ref_id)['balance'] + (amount * 0.1))}
+                {'balance': (db.user_info(ref_id)['balance'] + award)}
             )
+
         except KeyError:
             pass
 
     else:
         await bot.send_message(
             user_id,
-            f"🤥 Твой перевод на {amount}₽ не прошел.."
+            f"🤥 <b>Твой перевод на</b> <code>{amount}₽</code> <b>не прошел..</b>"
         )
         await call.message.edit_text(
             f"{user_id}\n"

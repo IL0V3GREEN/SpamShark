@@ -5,13 +5,14 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from keyboards.balance_buttons import deposit_menu
+from keyboards.profile_buttons import deposit_menu
 from keyboards.spamCreator_buttons import edit_sets, EditFactory, admin_spam_start, client_finish_buttons, \
     choose_theme, choose_count, admin_spam_end
 from utils.check_state import check_text, check_media, check_inline
 from mongo import Database
 import random
 
+from utils.profille_functions import get_rate_status, get_ref_percent
 
 db = Database()
 router = Router()
@@ -291,14 +292,22 @@ async def getting_self_count(message: Message, state: FSMContext):
     else:
         await message.answer("🔚 Ты вышел из спам-билдера.")
         await message.answer(
-            f"🥷🏻<b>Твой профиль!</b>\n"
-            f"├ 🆔<b>ID:</b> <code>{message.from_user.id}</code>"
-            f"└ 💎<b>Баланс:</b> {db.user_info(message.from_user.id)['balance']:.2f}₽\n\n"
-            f"🤝<b>Реферальная система:</b>"
-            f"├ 👥<b>Рефералы:</b> \n"
-            f"├ 🧊<b>Профит с рефералов:</b> 10%\n"
-            f"└ 📎<b>Ссылка:</b> <code>https://t.me/spamsharkbot?start=ref_{message.from_user.id}</code>",
-            reply_markup=deposit_menu()
+            f"🥷🏻 <b>Твой профиль!</b>\n"
+            f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
+            f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(message.from_user.id)['balance']:.1f}₽</code>\n\n"
+            f"📦 <b>Заказы</b>\n"
+            f"├ <b>Сегодня:</b> <code>{db.count_today(message.from_user.id)}</code>\n"
+            f"├ <b>За 7 дней:</b> <code>{db.count_week(message.from_user.id)}</code>\n"
+            f"├ <b>За 30 дней:</b> <code>{db.count_month(message.from_user.id)}</code>\n"
+            f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
+            f"└ 📬 <b>Сообщений отправлено:</b>\n\n"
+            f"💥 <b>Рейтинг</b>\n\n"
+            f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
+            f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
+            f"🤝 <b>Реферальная система</b>\n"
+            f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
+            f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>",
+            reply_markup=deposit_menu(message.from_user.id)
         )
         await state.clear()
 
@@ -434,14 +443,22 @@ async def getting_text(message: Message, state: FSMContext):
     else:
         await message.answer("🔚 Ты вышел из спам-билдера.")
         await message.answer(
-            f"🥷🏻<b>Твой профиль!</b>\n"
-            f"├ 🆔<b>ID:</b> <code>{message.from_user.id}</code>"
-            f"└ 💎<b>Баланс:</b> {db.user_info(message.from_user.id)['balance']:.2f}₽\n\n"
-            f"🤝<b>Реферальная система:</b>"
-            f"├ 👥<b>Рефералы:</b> \n"
-            f"├ 🧊<b>Профит с рефералов:</b> 10%\n"
-            f"└ 📎<b>Ссылка:</b> <code>https://t.me/spamsharkbot?start=ref_{message.from_user.id}</code>",
-            reply_markup=deposit_menu()
+            f"🥷🏻 <b>Твой профиль!</b>\n"
+            f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
+            f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(message.from_user.id)['balance']:.1f}₽</code>\n\n"
+            f"📦 <b>Заказы</b>\n"
+            f"├ <b>Сегодня:</b> <code>{db.count_today(message.from_user.id)}</code>\n"
+            f"├ <b>За 7 дней:</b> <code>{db.count_week(message.from_user.id)}</code>\n"
+            f"├ <b>За 30 дней:</b> <code>{db.count_month(message.from_user.id)}</code>\n"
+            f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
+            f"└ 📬 <b>Сообщений отправлено:</b>\n\n"
+            f"💥 <b>Рейтинг</b>\n\n"
+            f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
+            f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
+            f"🤝 <b>Реферальная система</b>\n"
+            f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
+            f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>",
+            reply_markup=deposit_menu(message.from_user.id)
         )
         await state.clear()
 

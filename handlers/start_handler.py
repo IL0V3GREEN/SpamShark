@@ -20,15 +20,17 @@ async def start_handle(message: Message, state: FSMContext):
             if ref_id != message.from_user.id:
                 db.add_user(message.from_user.id)
                 db.update_string(message.from_user.id, {'ref_id': ref_id})
+                db.update_string(ref_id, {'rating': (db.user_info(ref_id)['rating'] + 10)})
+
             else:
-                await message.answer("Нельзя зарегистрироваться по своей реферальной ссылке!")
+                await message.answer("<b>📛 Нельзя зарегистрироваться по своей реферальной ссылке!</b>")
         else:
             db.add_user(message.from_user.id)
 
         await message.answer_sticker("CAACAgIAAxkBAAEKCRxk2__X8I1sEWoCtF30MhfGaPPsVgACJxwAAtqDAAFKAAG1a2gCHgiTMAQ")
         await asyncio.sleep(1)
         await message.answer(
-            "📩 Многопоточная <a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылка</b></a> разошлет "
+            "📩 Многопоточная <a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылка</b></a> отправит "
             "пользователям все, что тебе угодно!\n\n"
             '⚡️ Чтобы начать пользоваться ботом, нажми кнопку <b>"Меню"</b>'
         )
@@ -43,7 +45,7 @@ async def start_handle(message: Message, state: FSMContext):
         )
     elif message.text[7:] == "spamcreate":
         await message.answer(
-            "🌚 Выберите целевую аудиторию.",
+            "🌚 <b>Выберите целевую аудиторию.</b>",
             reply_markup=choose_theme()
         )
 
