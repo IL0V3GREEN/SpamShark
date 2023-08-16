@@ -25,7 +25,7 @@ def get_ref_percent(x: int) -> int:
         return 20
 
 
-def get_price(x: int) -> float | int:
+def get_price(x: int) -> float:
     if x < 100:
         return 1.5
 
