@@ -9,7 +9,7 @@ db = Database()
 router = Router()
 
 
-@router.message(Command(commands="info"))
+@router.message(Command(commands="faq"))
 async def start_parsing(message: Message):
     await message.answer(
         "👨🏻‍🏫 <b>Информационная панель</b>",
@@ -23,7 +23,7 @@ async def info_handling(call: CallbackQuery):
     if thing == "rating":
         await call.message.edit_text(
             f"💥 <b>Рейтинговая система</b>\n\n"
-            f"<b>Рейтинг:</b> <code></code> 🏆\n\n"
+            f"<b>Рейтинг:</b> <code>{db.user_info(call.from_user.id)['rating']}</code> 🏆\n\n"
             f"📌 Что дают кубки:\n"
             f"🟩 Спамер (от 100 🏆):\n"
             f"- 10% от пополнений рефералов\n\n"

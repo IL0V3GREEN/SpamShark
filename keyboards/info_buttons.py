@@ -17,7 +17,7 @@ def main_info_buttons():
     )
     builder.button(
         text="☎️ Поддержка",
-        url=""
+        url="https://t.me/rrassvetov"
     )
     builder.adjust(1)
     return builder.as_markup()

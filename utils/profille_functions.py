@@ -1,3 +1,7 @@
+from mongo import Database
+
+
+db = Database()
 
 
 def get_rate_status(x: int) -> str:
@@ -37,3 +41,12 @@ def get_price(x: int) -> float:
 
     elif x >= 1000:
         return 1
+
+
+def get_reqs(user_id):
+    try:
+        requisites = db.user_info(user_id)['requisites']
+        return requisites
+    except KeyError:
+        requisites = "Не указан"
+        return requisites

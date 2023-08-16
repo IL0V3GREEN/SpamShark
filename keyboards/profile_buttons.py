@@ -27,6 +27,16 @@ def deposit_menu(user_id):
     return builder.as_markup()
 
 
+def writing_reqs():
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="🔙 Назад",
+        callback_data="backfromwritting"
+    )
+    builder.adjust(1)
+    return builder.as_markup()
+
+
 def crypto_pay_button(url, amount, currency, invoice_id, user_id, rubles):
     builder = InlineKeyboardBuilder()
     builder.button(

@@ -1,4 +1,4 @@
-from handlers import start_handler, spamCreate_handlers, parsing_handlers, profile_handlers
+from handlers import start_handler, spamCreate_handlers, parsing_handlers, profile_handlers, info_handlers
 import logging
 from aiogram import Bot, Dispatcher
 from aiohttp import web
@@ -29,6 +29,7 @@ def main():
     dp.include_router(spamCreate_handlers.router)
     dp.include_router(parsing_handlers.router)
     dp.include_router(profile_handlers.router)
+    dp.include_router(info_handlers.router)
     dp.startup.register(on_startup)
 
     app = web.Application()

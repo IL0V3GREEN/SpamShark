@@ -3,12 +3,12 @@ from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
 from keyboards.profile_buttons import deposit_menu, payment_methods, \
-    done_transaction, approving_pay, cryptopay_panel, crypto_pay_button
+    done_transaction, approving_pay, cryptopay_panel, crypto_pay_button, writing_reqs
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from mongo import Database
 from utils.bank_type import check_bank
-from utils.profille_functions import get_ref_percent, get_rate_status
+from utils.profille_functions import get_ref_percent, get_rate_status, get_reqs
 from aiocryptopay import AioCryptoPay, Networks
 
 
@@ -24,17 +24,19 @@ class BalanceState(StatesGroup):
 
 @router.message(Command(commands="profile"))
 async def balance_menu(message: Message, state: FSMContext):
+
     await message.answer(
         f"🥷🏻 <b>Твой профиль!</b>\n"
         f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
+        f"├ 💳 <b>Реквизиты:</b> <code>{get_reqs(message.from_user.id)}</code>\n"
         f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(message.from_user.id)['balance']:.1f}</code>₽\n\n"
         f"📦 <b>Заказы</b>\n"
         f"├ <b>Сегодня:</b> <code>{db.count_today(message.from_user.id)}</code>\n"
         f"├ <b>За 7 дней:</b> <code>{db.count_week(message.from_user.id)}</code>\n"
         f"├ <b>За 30 дней:</b> <code>{db.count_month(message.from_user.id)}</code>\n"
         f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
-        f"└ 📬 <b>Сообщений отправлено:</b>\n\n"
-        f"💥 <b>Рейтинг</b>\n\n"
+        f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(message.from_user.id)}</code>\n\n"
+        f"💥 <b>Рейтинг</b>\n"
         f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
         f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
         f"🤝 <b>Реферальная система</b>\n"
@@ -54,6 +56,63 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
             "<i>минимальное пополнение - 100₽</i>"
         )
         await state.set_state(BalanceState.amount)
+
+    elif action == "reqs":
+        await call.message.edit_text(
+            "👨🏻‍🏫 <b>Ты можешь сюда ввести номеры карты, адрес крипто кошелька или номер телефона для СБП/QIWI "
+            "(вместе с номером впиши банк для перевода)</b>",
+            reply_markup=writing_reqs()
+        )
+        await state.set_state(BalanceState.requisites)
+
+
+@router.message(BalanceState.requisites, F.text)
+async def getting_reqs(message: Message, state: FSMContext):
+    db.update_string(message.from_user.id, {'requisites': message.text})
+    await message.answer(
+        f"🥷🏻 <b>Твой профиль!</b>\n"
+        f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
+        f"├ 💳 <b>Реквизиты:</b> <code>{get_reqs(message.from_user.id)}</code>\n"
+        f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(message.from_user.id)['balance']:.1f}</code>₽\n\n"
+        f"📦 <b>Заказы</b>\n"
+        f"├ <b>Сегодня:</b> <code>{db.count_today(message.from_user.id)}</code>\n"
+        f"├ <b>За 7 дней:</b> <code>{db.count_week(message.from_user.id)}</code>\n"
+        f"├ <b>За 30 дней:</b> <code>{db.count_month(message.from_user.id)}</code>\n"
+        f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
+        f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(message.from_user.id)}</code>\n\n"
+        f"💥 <b>Рейтинг</b>\n"
+        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
+        f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
+        f"🤝 <b>Реферальная система</b>\n"
+        f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
+        f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>%",
+        reply_markup=deposit_menu(message.from_user.id)
+    )
+    await state.clear()
+
+
+@router.callback_query(F.data == "backfromwritting")
+async def back_from_writing(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_text(
+        f"🥷🏻 <b>Твой профиль!</b>\n"
+        f"├ 🆔<b>:</b> <code>{call.from_user.id}</code>\n"
+        f"├ 💳 <b>Реквизиты:</b> <code>{get_reqs(call.from_user.id)}</code>\n"
+        f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(call.from_user.id)['balance']:.1f}</code>₽\n\n"
+        f"📦 <b>Заказы</b>\n"
+        f"├ <b>Сегодня:</b> <code>{db.count_today(call.from_user.id)}</code>\n"
+        f"├ <b>За 7 дней:</b> <code>{db.count_week(call.from_user.id)}</code>\n"
+        f"├ <b>За 30 дней:</b> <code>{db.count_month(call.from_user.id)}</code>\n"
+        f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': call.from_user.id})))}</code>\n"
+        f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(call.from_user.id)}</code>\n\n"
+        f"💥 <b>Рейтинг</b>\n"
+        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(call.from_user.id)['rating'])}</code>\n"
+        f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(call.from_user.id)['rating']}</code>\n\n"
+        f"🤝 <b>Реферальная система</b>\n"
+        f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(call.from_user.id)}</code>\n"
+        f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(call.from_user.id)['rating'])}</code>%",
+        reply_markup=deposit_menu(call.from_user.id)
+    )
+    await state.clear()
 
 
 @router.message(BalanceState.amount, F.text)
