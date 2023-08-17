@@ -4,9 +4,6 @@ from aiogram.types import Message
 
 
 class DeletingMessage(BaseMiddleware):
-    def __init__(self) -> None:
-        pass
-
     async def __call__(
             self,
             handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
