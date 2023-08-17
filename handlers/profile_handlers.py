@@ -69,6 +69,7 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
 @router.message(BalanceState.requisites, F.text)
 async def getting_reqs(message: Message, state: FSMContext, bot: Bot):
     db.update_string(message.from_user.id, {'requisites': message.text})
+    await bot.delete_message(message.chat.id, message.message_id - 1)
     await bot.delete_message(message.chat.id, message.message_id)
     await message.answer(
         f"🥷🏻 <b>Твой профиль!</b>\n"
@@ -117,10 +118,12 @@ async def back_from_writing(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(BalanceState.amount, F.text)
-async def getting_amount(message: Message, state: FSMContext):
+async def getting_amount(message: Message, state: FSMContext, bot: Bot):
     try:
         amount = int(message.text)
         if amount >= 100:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
+            await bot.delete_message(message.chat.id, message.message_id)
             await state.update_data(amount=amount)
             await message.answer(
                 f"🧾 Пополнение на {amount}₽\n\n"
