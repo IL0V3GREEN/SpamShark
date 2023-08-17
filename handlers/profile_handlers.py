@@ -67,8 +67,9 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(BalanceState.requisites, F.text)
-async def getting_reqs(message: Message, state: FSMContext):
+async def getting_reqs(message: Message, state: FSMContext, bot: Bot):
     db.update_string(message.from_user.id, {'requisites': message.text})
+    await bot.delete_message(message.chat.id, message.message_id)
     await message.answer(
         f"🥷🏻 <b>Твой профиль!</b>\n"
         f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
