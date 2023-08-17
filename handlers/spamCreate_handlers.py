@@ -445,6 +445,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
 
     else:
         await bot.delete_message(message.chat.id, message.message_id - 2)
+        await bot.delete_message(message.chat.id, message.message_id - 1)
         await message.answer("🔚 Ты вышел из спам-билдера.")
         await message.answer(
             f"🥷🏻 <b>Твой профиль!</b>\n"
