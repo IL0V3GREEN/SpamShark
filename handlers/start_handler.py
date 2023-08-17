@@ -39,7 +39,7 @@ async def start_handle(message: Message, state: FSMContext):
         await message.answer_sticker("CAACAgIAAxkBAAEKCRxk2__X8I1sEWoCtF30MhfGaPPsVgACJxwAAtqDAAFKAAG1a2gCHgiTMAQ")
         await asyncio.sleep(1)
         await message.answer(
-            "📩 Многопоточная <a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылка</b></a> разошлет "
+            "📩 Многопоточная <a href='https://t.me/spamsharkbot?start=spamcreate'><b>спам-рассылка</b></a> отправит "
             "юзерам все, что тебе угодно!\n\n"
             '⚡️ Чтобы начать пользоваться ботом, нажми кнопку <b>"Меню"</b>'
         )

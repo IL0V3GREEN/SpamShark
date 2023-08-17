@@ -24,8 +24,7 @@ class Database:
         self.collection.insert_one(
             {
                 'user_id': user_id,
-                'balance': 0,
-                'rating': 0
+                'balance': 0
             }
         )
 
@@ -105,7 +104,11 @@ class Database:
             messages += order['messages']
         return messages
 
-    def count_referrals(self, user_id):
+    def count_rating(self, user_id) -> int:
+        result = len(list(self.orders.find({'user_id': user_id}))) + (Database().count_referrals(user_id) * 10)
+        return result
+
+    def count_referrals(self, user_id) -> int:
         return len(list(self.collection.find({'ref_id': user_id})))
 
     def get_order_info(self, order_uid):

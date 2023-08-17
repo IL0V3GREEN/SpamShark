@@ -37,8 +37,8 @@ async def balance_menu(message: Message, state: FSMContext):
         f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
         f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(message.from_user.id)}</code>\n\n"
         f"💥 <b>Рейтинг</b>\n"
-        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
-        f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
+        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.count_rating(message.from_user.id))}</code>\n"
+        f"└ 🏆 <b>Кубков:</b> <code>{db.count_rating(message.from_user.id)}</code>\n\n"
         f"🤝 <b>Реферальная система</b>\n"
         f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
         f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>%",
@@ -81,8 +81,8 @@ async def getting_reqs(message: Message, state: FSMContext):
         f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
         f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(message.from_user.id)}</code>\n\n"
         f"💥 <b>Рейтинг</b>\n"
-        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
-        f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
+        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.count_rating(message.from_user.id))}</code>\n"
+        f"└ 🏆 <b>Кубков:</b> <code>{db.count_rating(message.from_user.id)}</code>\n\n"
         f"🤝 <b>Реферальная система</b>\n"
         f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
         f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>%",
@@ -105,8 +105,8 @@ async def back_from_writing(call: CallbackQuery, state: FSMContext):
         f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': call.from_user.id})))}</code>\n"
         f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(call.from_user.id)}</code>\n\n"
         f"💥 <b>Рейтинг</b>\n"
-        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(call.from_user.id)['rating'])}</code>\n"
-        f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(call.from_user.id)['rating']}</code>\n\n"
+        f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.count_rating(call.from_user.id))}</code>\n"
+        f"└ 🏆 <b>Кубков:</b> <code>{db.count_rating(call.from_user.id)}</code>\n\n"
         f"🤝 <b>Реферальная система</b>\n"
         f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(call.from_user.id)}</code>\n"
         f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(call.from_user.id)['rating'])}</code>%",
