@@ -566,23 +566,17 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
 
     elif action == "delete":
         if callback_data.text and callback_data.media:
-            await call.message.delete()
-            await call.message.answer_photo(
-                photo=data['media'],
-                caption=data['text'],
+            await call.message.edit_reply_markup(
                 reply_markup=edit_sets(True, True, False, data['spam_theme'], data['message_count'])
             )
         elif callback_data.text and not callback_data.media:
-            await call.message.edit_text(
-                data['text'],
-                reply_markup=edit_sets(True, False, False, data['spam_theme'], data['message_count'])
+            await call.message.edit_reply_markup(
+                reply_markup=edit_sets(True, True, False, data['spam_theme'], data['message_count'])
             )
 
         elif not callback_data.text and callback_data.media:
-            await call.message.delete()
-            await call.message.answer_photo(
-                data['media'],
-                reply_markup=edit_sets(False, True, False, data['spam_theme'], data['message_count'])
+            await call.message.edit_reply_markup(
+                reply_markup=edit_sets(True, True, False, data['spam_theme'], data['message_count'])
             )
     await state.update_data(inline="")
 
@@ -598,6 +592,7 @@ async def getting_inline_buttons(message: Message, state: FSMContext, bot: Bot):
         links = message.text.split("\n")
         await state.update_data(inline=links)
         await message.answer("URL-кнопки добавлены.", reply_markup=ReplyKeyboardRemove())
+        await bot.delete_message(message.chat.id, message.message_id + 1)
         if media and text:
             try:
                 await message.answer_photo(
