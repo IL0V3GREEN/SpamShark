@@ -53,9 +53,8 @@ class Database:
         )
 
     def count_today(self, user_id) -> len:
-        orders = list(self.orders.find({'user_id': user_id}))
         today_orders = []
-        for order in orders:
+        for order in list(self.orders.find({'user_id': user_id})):
             if order['date']['year'] == datetime.now(self.tz).strftime("%Y") and \
                     order['date']['month'] == datetime.now(self.tz).strftime("%m") and \
                     order['date']['day'] == datetime.now(self.tz).strftime("%d"):
@@ -64,35 +63,35 @@ class Database:
         return len(today_orders)
 
     def count_week(self, user_id) -> len:
-        today = int(datetime.now(self.tz).timestamp())
-        time_7_day_before = int((datetime.now(self.tz) - timedelta(days=7)).timestamp())
-        orders = list(self.orders.find({'user_id': user_id}))
         week_orders = []
-        for order in orders:
+        for order in list(self.orders.find({'user_id': user_id})):
             order_time = datetime(
                 int(order['date']['year']),
                 int(order['date']['month']),
                 int(order['date']['day'])
             ).timestamp()
 
-            if order_time in range(time_7_day_before, today):
+            if order_time in range(
+                    int((datetime.now(self.tz) - timedelta(days=7)).timestamp()),
+                    int(datetime.now(self.tz).timestamp())
+            ):
                 week_orders.append(order)
 
         return len(week_orders)
 
     def count_month(self, user_id) -> len:
-        today = int(datetime.now(self.tz).timestamp())
-        time_30_day_before = int((datetime.now(self.tz) - timedelta(days=30)).timestamp())
-        orders = list(self.orders.find({'user_id': user_id}))
         month_orders = []
-        for order in orders:
+        for order in list(self.orders.find({'user_id': user_id})):
             order_time = datetime(
                 int(order['date']['year']),
                 int(order['date']['month']),
                 int(order['date']['day'])
             ).timestamp()
 
-            if order_time in range(time_30_day_before, today):
+            if order_time in range(
+                    int((datetime.now(self.tz) - timedelta(days=30)).timestamp()),
+                    int(datetime.now(self.tz).timestamp())
+            ):
                 month_orders.append(order)
 
         return len(month_orders)
@@ -105,7 +104,7 @@ class Database:
         return messages
 
     def count_rating(self, user_id) -> int:
-        result = len(list(self.orders.find({'user_id': user_id}))) + (Database().count_referrals(user_id) * 10)
+        result = len(list(self.orders.find({'user_id': user_id}))) + Database().count_referrals(user_id) * 10
         return result
 
     def count_referrals(self, user_id) -> int:
