@@ -2,6 +2,8 @@ import random
 from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
+
+from keyboards.info_buttons import main_info_buttons
 from keyboards.profile_buttons import deposit_menu, payment_methods, \
     done_transaction, approving_pay, cryptopay_panel, crypto_pay_button, writing_reqs
 from aiogram.fsm.context import FSMContext
@@ -119,23 +121,29 @@ async def back_from_writing(call: CallbackQuery, state: FSMContext):
 
 @router.message(BalanceState.amount, F.text)
 async def getting_amount(message: Message, state: FSMContext, bot: Bot):
-    try:
-        amount = int(message.text)
-        if amount >= 100:
-            await bot.delete_message(message.chat.id, message.message_id - 1)
-            await bot.delete_message(message.chat.id, message.message_id)
-            await state.update_data(amount=amount)
-            await message.answer(
-                f"🧾 Пополнение на {amount}₽\n\n"
-                f"<i>*Если хочешь изменить сумму пополнения, "
-                f"просто отправь другое число*</i>\n\n"
-                f"Выбери способ оплаты:",
-                reply_markup=payment_methods()
-            )
-        else:
-            await message.answer("📛 Минимальное пополнение - 100₽")
-    except ValueError:
-        await message.answer("👨🏻‍🏫 Введи целое число")
+    if message.text != '/faq':
+        try:
+            amount = int(message.text)
+            if amount >= 100:
+                await bot.delete_message(message.chat.id, message.message_id - 1)
+                await bot.delete_message(message.chat.id, message.message_id)
+                await state.update_data(amount=amount)
+                await message.answer(
+                    f"🧾 Пополнение на {amount}₽\n\n"
+                    f"<i>*Если хочешь изменить сумму пополнения, "
+                    f"просто отправь другое число*</i>\n\n"
+                    f"Выбери способ оплаты:",
+                    reply_markup=payment_methods()
+                )
+            else:
+                await message.answer("📛 Минимальное пополнение - 100₽")
+        except ValueError:
+            await message.answer("👨🏻‍🏫 Введи целое число")
+    else:
+        await message.answer(
+            "👨🏻‍🏫 <b>Информационная панель</b>",
+            reply_markup=main_info_buttons()
+        )
 
 
 # choosing payment methods
@@ -215,11 +223,10 @@ async def approving_cryptopay(call: CallbackQuery):
         await call.message.delete()
         await call.message.answer(f"<b>✅ Счет успешно пополнен на</b> <code>{amount}₽</code>")
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
-        db.update_string(user_id, {'rating': (db.user_info(user_id)['rating'] + 1)})
 
         try:
             ref_id = db.user_info(user_id)['ref_id']
-            award = ((amount / 100) * get_ref_percent(db.user_info(ref_id)['rating']))
+            award = ((amount / 100) * get_ref_percent(db.count_rating(ref_id)))
             db.update_string(
                 ref_id,
                 {'balance': (db.user_info(ref_id)['balance'] + award)}
@@ -263,7 +270,6 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
             f"✅ <b>Счет успешно пополнен на</b> <code>{amount}₽</code>"
         )
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
-        db.update_string(user_id, {'rating': (db.user_info(user_id)['rating'] + 1)})
         await call.message.edit_text(
             f"{user_id}\n"
             f"{amount}₽\n\n"
@@ -272,7 +278,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
 
         try:
             ref_id = db.user_info(user_id)['ref_id']
-            award = ((amount / 100) * get_ref_percent(db.user_info(ref_id)['rating']))
+            award = ((amount / 100) * get_ref_percent(db.count_rating(ref_id)))
             db.update_string(
                 ref_id,
                 {'balance': (db.user_info(ref_id)['balance'] + award)}
