@@ -571,12 +571,12 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
             )
         elif callback_data.text and not callback_data.media:
             await call.message.edit_reply_markup(
-                reply_markup=edit_sets(True, True, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(True, False, False, data['spam_theme'], data['message_count'])
             )
 
         elif not callback_data.text and callback_data.media:
             await call.message.edit_reply_markup(
-                reply_markup=edit_sets(True, True, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(False, True, False, data['spam_theme'], data['message_count'])
             )
     await state.update_data(inline="")
 
