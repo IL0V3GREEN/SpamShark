@@ -72,7 +72,6 @@ async def balance_callback(call: CallbackQuery, state: FSMContext):
 async def getting_reqs(message: Message, state: FSMContext, bot: Bot):
     db.update_string(message.from_user.id, {'requisites': message.text})
     await bot.delete_message(message.chat.id, message.message_id - 1)
-    await bot.delete_message(message.chat.id, message.message_id)
     await message.answer(
         f"🥷🏻 <b>Твой профиль!</b>\n"
         f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
@@ -126,7 +125,6 @@ async def getting_amount(message: Message, state: FSMContext, bot: Bot):
             amount = int(message.text)
             if amount >= 100:
                 await bot.delete_message(message.chat.id, message.message_id - 1)
-                await message.delete()
                 await state.update_data(amount=amount)
                 await message.answer(
                     f"🧾 Пополнение на {amount}₽\n\n"
