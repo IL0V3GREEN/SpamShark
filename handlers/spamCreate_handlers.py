@@ -200,12 +200,13 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(UserState.message_count, F.text)
-async def getting_self_count(message: Message, state: FSMContext):
+async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
     if message.text != "/profile":
         count = message.text
         try:
             count = int(count)
             if count <= 10000:
+                await bot.delete_message(message.chat.id, message.message_id - 1)
                 await state.update_data(message_count=count)
                 data = await state.get_data()
 
@@ -313,12 +314,13 @@ async def getting_self_count(message: Message, state: FSMContext):
 
 
 @router.message(UserState.client_text, F.photo | F.video)
-async def getting_text(message: Message, state: FSMContext):
+async def getting_text(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
 
     text = await check_text(data)
     buttons = await check_inline(data)
 
+    await bot.delete_message(message.chat.id, message.message_id - 1)
     if text and buttons:
         try:
             await message.answer_photo(
@@ -396,13 +398,14 @@ async def getting_text(message: Message, state: FSMContext):
 
 
 @router.message(UserState.client_text, F.text)
-async def getting_text(message: Message, state: FSMContext):
+async def getting_text(message: Message, state: FSMContext, bot: Bot):
     if message.text != '/profile':
         data = await state.get_data()
 
         media = await check_media(data)
         buttons = await check_inline(data)
 
+        await bot.delete_message(message.chat.id, message.message_id - 1)
         if media and buttons:
             await message.answer_photo(
                 photo=data['media'],
@@ -589,6 +592,8 @@ async def getting_inline_buttons(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
     text = await check_text(data)
     media = await check_media(data)
+
+    await bot.delete_message(message.chat.id, message.message_id - 1)
     if message.text != "Отмена":
         links = message.text.split("\n")
         await state.update_data(inline=links)
