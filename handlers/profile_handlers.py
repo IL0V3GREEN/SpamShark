@@ -41,7 +41,7 @@ async def balance_menu(message: Message, state: FSMContext):
         f"└ 🏆 <b>Кубков:</b> <code>{db.count_rating(message.from_user.id)}</code>\n\n"
         f"🤝 <b>Реферальная система</b>\n"
         f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
-        f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>%",
+        f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.count_rating(message.from_user.id))}</code>%",
         reply_markup=deposit_menu(message.from_user.id)
     )
     await state.clear()
