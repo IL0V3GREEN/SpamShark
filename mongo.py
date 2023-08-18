@@ -20,10 +20,11 @@ class Database:
         except TypeError:
             return False
 
-    def add_user(self, user_id):
+    def add_user(self, user_id, username):
         self.collection.insert_one(
             {
                 'user_id': user_id,
+                'username': username,
                 'balance': 0
             }
         )
@@ -106,6 +107,14 @@ class Database:
     def count_rating(self, user_id) -> int:
         return len(list(self.orders.find({'user_id': user_id}))) + \
             len(list(self.collection.find({'ref_id': user_id}))) * 10
+
+    def top_rating_list(self):
+        all_users = list(self.collection.find())
+        rate_tuple = {}
+        for i in all_users:
+            rate_tuple.update({i['username']: Database().count_rating(i['user_id'])})
+
+        print(rate_tuple)
 
     def count_referrals(self, user_id) -> int:
         return len(list(self.collection.find({'ref_id': user_id})))

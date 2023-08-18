@@ -1,7 +1,8 @@
 from aiogram.filters import Command
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
-from keyboards.info_buttons import main_info_buttons, rating_buttons, how_to_increase_button
+from keyboards.info_buttons import main_info_buttons, rating_buttons, \
+    how_to_increase_button, back_from_stats
 from mongo import Database
 
 
@@ -38,8 +39,11 @@ async def info_handling(call: CallbackQuery):
             reply_markup=rating_buttons()
         )
 
-    elif thing == "top":
-        pass
+    elif thing == "stats":
+        await call.message.edit_text(
+            "⚔️ <b>ТОП-10 по рейтингу</b>\n\n",
+            reply_markup=back_from_stats()
+        )
 
     elif thing == "review":
         pass

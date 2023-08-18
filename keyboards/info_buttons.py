@@ -17,7 +17,17 @@ def main_info_buttons():
     )
     builder.button(
         text="☎️ Поддержка",
-        url="https://t.me/rrassvetov"
+        url="https://t.me/maximus_cls"
+    )
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def back_from_stats():
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="🔙 Назад",
+        callback_data="rating_back"
     )
     builder.adjust(1)
     return builder.as_markup()

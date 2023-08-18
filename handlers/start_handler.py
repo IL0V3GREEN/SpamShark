@@ -14,17 +14,22 @@ router = Router()
 
 @router.message(Command(commands="start"))
 async def start_handle(message: Message, state: FSMContext):
+    if message.from_user.username is not None:
+        username = f"@{message.from_user.username}"
+    else:
+        username = message.from_user.full_name
+
     if not db.user_exists(message.from_user.id):
         if message.text[7:].startswith("ref"):
             ref_id = int(message.text[7:].split("_")[1])
             if ref_id != message.from_user.id:
-                db.add_user(message.from_user.id)
+                db.add_user(message.from_user.id, username)
                 db.update_string(message.from_user.id, {'ref_id': ref_id})
 
             else:
                 await message.answer("<b>📛 Нельзя зарегистрироваться по своей реферальной ссылке!</b>")
         else:
-            db.add_user(message.from_user.id)
+            db.add_user(message.from_user.id, username)
 
     if message.text[7:] == "spamcreate":
         await message.answer(
