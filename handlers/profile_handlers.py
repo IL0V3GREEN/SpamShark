@@ -50,14 +50,34 @@ async def balance_menu(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith("balance"))
-async def balance_callback(call: CallbackQuery, state: FSMContext):
+async def balance_callback(call: CallbackQuery, state: FSMContext, bot: Bot):
     action = call.data.split("_")[1]
     if action == "deposit":
         await call.message.answer(
             "🧐 Cколько <b>₽</b> пополняем?\n\n"
-            "<i>минимальное пополнение - 100₽</i>"
+            "<i>минимальное пополнение -</i> <code>100</code><i>₽</i>"
         )
         await state.set_state(BalanceState.amount)
+
+    elif action == "withdraw":
+        if db.user_info(call.from_user.id)['balance'] >= 300:
+            await call.message.edit_text(
+                "🗳 <b>Ваша заявка на вывод средств отправлена. "
+                "Бот отправит Тебе сообщение, когда заявка будет обработана.</b>",
+                reply_markup=writing_reqs()
+            )
+            await bot.send_message(
+                call.from_user.id,
+                f"Вывод\n"
+                f"ID: {call.from_user.id}\n"
+                f"Баланс: {db.user_info(call.from_user.id)['balance']}\n"
+                f"Реквизиты: {db.user_info(call.from_user.id)['requisites']}"
+            )
+
+        else:
+            await call.message.edit_text(
+                "📛 <b>Минимальная сумма вывода - </b><code>300</code><b>₽</b>"
+            )
 
     elif action == "reqs":
         await call.message.edit_text(
@@ -294,4 +314,33 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
             f"{user_id}\n"
             f"{amount}₽\n\n"
             f"Отклонено"
+        )
+
+
+@router.callback_query(F.data.startswith("approvewithdraw"))
+async def approving_withdraw(call: CallbackQuery, bot: Bot):
+    action = call.data.split("_")[1]
+    user_id = int(call.data.split("_")[2])
+    if action == "yes":
+        await call.message.edit_text(
+            f"{user_id}\n"
+            f"Подтверждено"
+        )
+        await bot.send_message(
+            user_id,
+            "✔️ <b>Заявка на вывод была успешно обработана. Средства были переведены на твои реквизиты.</b>"
+        )
+        db.update_string(user_id, {'balance': 0})
+
+    elif action == "no":
+        await call.message.edit_text(
+            f"{user_id}\n"
+            f"Отклонено"
+        )
+        await bot.send_message(
+            user_id,
+            "📛 <b>Заявка на вывод была отклонена\n\n</b>"
+            "🫤<b>Возможные причины:</b>"
+            " - предоставлены неверные реквизиты"
+            " - технические проблемы на стороне банка"
         )

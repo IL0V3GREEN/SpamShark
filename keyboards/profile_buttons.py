@@ -88,6 +88,20 @@ def approving_pay(user_id, amount):
     return builder.as_markup()
 
 
+def approving_withdraw(user_id):
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="Подтвердить",
+        callback_data=f"approvewithdraw_yes_{user_id}"
+    )
+    builder.button(
+        text="Отклонить",
+        callback_data=f"approvewithdraw_no_{user_id}"
+    )
+    builder.adjust(1)
+    return builder.as_markup()
+
+
 def cryptopay_panel(currency_list):
     builder = InlineKeyboardBuilder()
     for i in currency_list:
