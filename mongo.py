@@ -12,6 +12,7 @@ class Database:
         self.db = self.client.get_database('spamshark')
         self.collection = self.db.get_collection('users')
         self.orders = self.db.get_collection('orders')
+        self.functions = self.db.get_collection('functions')
         self.tz = pytz.timezone("Europe/Moscow")
 
     def user_exists(self, user_id):
@@ -26,7 +27,12 @@ class Database:
             {
                 'user_id': user_id,
                 'username': username,
-                'balance': 0
+                'balance': 0,
+                'date': {
+                    'year': datetime.now(self.tz).strftime("%Y"),
+                    'month': datetime.now(self.tz).strftime("%m"),
+                    'day': datetime.now(self.tz).strftime("%d")
+                }
             }
         )
 
@@ -39,13 +45,14 @@ class Database:
             {"$set": string}
         )
 
-    def create_spam_order(self, order_uid, user_id, value: int, theme):
+    def create_spam_order(self, order_uid, user_id, value: int, theme, price: int | float):
         self.orders.insert_one(
             {
                 'order_uid': order_uid,
                 'user_id': user_id,
                 'messages': value,
                 'theme': theme,
+                'price': price,
                 'date': {
                     'year': datetime.now(self.tz).strftime("%Y"),
                     'month': datetime.now(self.tz).strftime("%m"),
@@ -61,8 +68,25 @@ class Database:
                     order['date']['month'] == datetime.now(self.tz).strftime("%m") and \
                     order['date']['day'] == datetime.now(self.tz).strftime("%d"):
                 today_orders.append(order)
-
         return len(today_orders)
+
+    def earned_today(self) -> float:
+        earned = 0
+        for order in list(self.orders.find()):
+            if order['date']['year'] == datetime.now(self.tz).strftime("%Y") and \
+                    order['date']['month'] == datetime.now(self.tz).strftime("%m") and \
+                    order['date']['day'] == datetime.now(self.tz).strftime("%d"):
+                earned += order['price']
+        return earned
+
+    def users_joined_today(self) -> len:
+        users = []
+        for user in list(self.collection.find()):
+            if user['date']['year'] == datetime.now(self.tz).strftime("%Y") and \
+                    user['date']['month'] == datetime.now(self.tz).strftime("%m") and \
+                    user['date']['day'] == datetime.now(self.tz).strftime("%d"):
+                users.append(user)
+        return len(users)
 
     def count_week(self, user_id) -> len:
         week_orders = []
@@ -81,6 +105,36 @@ class Database:
 
         return len(week_orders)
 
+    def earned_week(self) -> float:
+        earned = 0
+        for order in list(self.orders.find()):
+            order_time = datetime(
+                int(order['date']['year']),
+                int(order['date']['month']),
+                int(order['date']['day'])
+            ).timestamp()
+            if order_time in range(
+                    int((datetime.now(self.tz) - timedelta(days=7)).timestamp()),
+                    int(datetime.now(self.tz).timestamp())
+            ):
+                earned += order['price']
+        return earned
+
+    def users_joined_week(self) -> len:
+        users = []
+        for user in list(self.collection.find()):
+            joined_time = datetime(
+                int(user['date']['year']),
+                int(user['date']['month']),
+                int(user['date']['day'])
+            ).timestamp()
+            if joined_time in range(
+                    int((datetime.now(self.tz) - timedelta(days=7)).timestamp()),
+                    int(datetime.now(self.tz).timestamp())
+            ):
+                users.append(user)
+        return len(users)
+
     def count_month(self, user_id) -> len:
         month_orders = []
         for order in list(self.orders.find({'user_id': user_id})):
@@ -98,6 +152,43 @@ class Database:
 
         return len(month_orders)
 
+    def earned_month(self) -> float:
+        earned = 0
+        for order in list(self.orders.find()):
+            order_time = datetime(
+                int(order['date']['year']),
+                int(order['date']['month']),
+                int(order['date']['day'])
+            ).timestamp()
+
+            if order_time in range(
+                    int((datetime.now(self.tz) - timedelta(days=30)).timestamp()),
+                    int(datetime.now(self.tz).timestamp())
+            ):
+                earned += order['price']
+        return earned
+
+    def users_joined_month(self) -> len:
+        users = []
+        for user in list(self.collection.find()):
+            joined_time = datetime(
+                int(user['date']['year']),
+                int(user['date']['month']),
+                int(user['date']['day'])
+            ).timestamp()
+            if joined_time in range(
+                    int((datetime.now(self.tz) - timedelta(days=30)).timestamp()),
+                    int(datetime.now(self.tz).timestamp())
+            ):
+                users.append(user)
+        return len(users)
+
+    def earned_alltime(self) -> float:
+        earned = 0
+        for order in list(self.orders.find()):
+            earned += order['price']
+        return earned
+
     def count_all_messages(self, user_id) -> int:
         orders = list(self.orders.find({'user_id': user_id}))
         messages = 0
@@ -114,10 +205,7 @@ class Database:
         users = []
         string = ""
         for i in all_users:
-            try:
-                users.append({'username': i['username'], 'rating': Database().count_rating(i['user_id'])})
-            except KeyError:
-                pass
+            users.append({'username': i['username'], 'rating': Database().count_rating(i['user_id'])})
         result = sorted(users, key=itemgetter('rating'), reverse=True)
         if len(result) >= 10:
             for count in range(0, 10):
@@ -138,10 +226,10 @@ class Database:
         return self.collection.find_one({'message_price': 'message_price'})['price']
 
     def get_shop_status(self):
-        return self.collection.find_one({"shop_status": "shop_status"})['status']
+        return self.functions.find_one({"shop_status": "shop_status"})['status']
 
     def change_shop_status(self):
         if Database().get_shop_status() == "enabled":
-            self.collection.update_one({"shop_status": "shop_status"}, {"$set": {'status': 'disabled'}})
+            self.functions.update_one({"shop_status": "shop_status"}, {"$set": {'status': 'disabled'}})
         elif Database().get_shop_status() == "disabled":
-            self.collection.update_one({"shop_status": "shop_status"}, {"$set": {'status': 'enabled'}})
+            self.functions.update_one({"shop_status": "shop_status"}, {"$set": {'status': 'enabled'}})

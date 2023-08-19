@@ -171,7 +171,7 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     if action == "cards":
         x = random.randint(0, 4)
-        card = db.collection.find_one({'my_cards': 'my_cards'})['cards'][x]
+        card = db.functions.find_one({'my_cards': 'my_cards'})['cards'][x]
         bank = check_bank(card)
         await call.message.edit_text(
             f"🏦 <i><b>{bank}</b></i>\n\n"

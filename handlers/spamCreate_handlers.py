@@ -700,7 +700,13 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
     if db.get_shop_status() == "enabled":
         if db.user_info(call.from_user.id)['balance'] >= (data['message_count'] * get_price(db.count_rating(call.from_user.id))):
             number = random.randint(0, 9999)
-            db.create_spam_order(number, call.from_user.id, data['message_count'], data['spam_theme'])
+            db.create_spam_order(
+                number,
+                call.from_user.id,
+                data['message_count'],
+                data['spam_theme'],
+                data['message_count'] * get_price(db.count_rating(call.from_user.id))
+            )
             db.update_string(
                 call.from_user.id,
                 {'balance': (db.user_info(call.from_user.id)['balance'] - (data['message_count'] * db.get_current_price()))}
