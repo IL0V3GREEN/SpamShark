@@ -1,4 +1,5 @@
-from handlers import start_handler, spamCreate_handlers, parsing_handlers, profile_handlers, info_handlers
+from handlers import start_handler, spamCreate_handlers, parsing_handlers, \
+    profile_handlers, info_handlers, admin_handlers
 import logging
 from middleware import deleting_message
 from aiogram import Bot, Dispatcher
@@ -32,6 +33,7 @@ def main():
     dp.include_router(parsing_handlers.router)
     dp.include_router(profile_handlers.router)
     dp.include_router(info_handlers.router)
+    dp.include_router(admin_handlers.router)
     dp.startup.register(on_startup)
 
     app = web.Application()
