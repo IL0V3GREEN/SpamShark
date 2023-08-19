@@ -48,7 +48,7 @@ async def info_handling(call: CallbackQuery):
 
     elif thing == "review":
         await call.message.edit_text(
-            "",
+            "📝 <b>Написать отзыв можно, нажав на кнопку снизу</b>",
             reply_markup=review_buttons()
         )
 
