@@ -11,12 +11,13 @@ router = Router()
 
 @router.message(Command(commands="adm"))
 async def admin_panel(message: Message):
-    await message.answer(
-        "👨🏻‍💻 <b>Админ панель</b>\n\n"
-        "  - Смена статуса шопа\n"
-        "  - Общая статистика",
-        reply_markup=main_menu(db.get_shop_status())
-    )
+    if message.from_user.id == 6364771832:
+        await message.answer(
+            "👨🏻‍💻 <b>Админ панель</b>\n\n"
+            "  - Смена статуса шопа\n"
+            "  - Общая статистика",
+            reply_markup=main_menu(db.get_shop_status())
+        )
 
 
 @router.callback_query(F.data.startswith("admpanel"))
