@@ -60,7 +60,7 @@ def rating_buttons():
 def review_buttons():
     builder = InlineKeyboardBuilder()
     builder.button(
-        text="📌 Тема на LOLZ",
+        text="📌 Наша тема на LOLZ",
         url='https://zelenka.guru/threads/5714798/'
     )
     builder.button(
