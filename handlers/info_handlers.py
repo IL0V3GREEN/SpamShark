@@ -43,11 +43,38 @@ async def info_handling(call: CallbackQuery):
         await call.message.edit_text(
             "⚔️ <b>ТОП-10 по рейтингу</b>\n\n"
             f"{db.top_rating_list()}",
-            reply_markup=back_from_stats()
+            reply_markup=back_from_stats(db.user_info(call.from_user.id)['username'])
         )
 
     elif thing == "review":
         pass
+
+
+@router.callback_query(F.data.startswith("topmake"))
+async def username_visibility(call: CallbackQuery):
+    action = call.data.split("_")[1]
+    if action == "invisible":
+        db.update_string(call.from_user.id, {'username': 'Скрыто'})
+        await call.answer("🙈 Твой ник скрыт из ТОПа", show_alert=True, cache_time=1)
+        await call.message.edit_text(
+            "⚔️ <b>ТОП-10 по рейтингу</b>\n\n"
+            f"{db.top_rating_list()}",
+            reply_markup=back_from_stats(db.user_info(call.from_user.id)['username'])
+        )
+
+    elif action == "visible":
+        if call.from_user.username is not None:
+            username = f"@{call.from_user.username}"
+        else:
+            username = call.from_user.full_name
+
+        db.update_string(call.from_user.id, {'username': f'@{username}'})
+        await call.answer("👀 Твой ник виден в ТОПе", show_alert=True, cache_time=1)
+        await call.message.edit_text(
+            "⚔️ <b>ТОП-10 по рейтингу</b>\n\n"
+            f"{db.top_rating_list()}",
+            reply_markup=back_from_stats(db.user_info(call.from_user.id)['username'])
+        )
 
 
 @router.callback_query(F.data.startswith("rating"))
