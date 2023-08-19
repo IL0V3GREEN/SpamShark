@@ -68,7 +68,7 @@ async def username_visibility(call: CallbackQuery):
         else:
             username = call.from_user.full_name
 
-        db.update_string(call.from_user.id, {'username': f'@{username}'})
+        db.update_string(call.from_user.id, {'username': f'{username}'})
         await call.answer("👀 Твой ник виден в ТОПе")
         await call.message.edit_text(
             "⚔️ <b>ТОП-10 по рейтингу</b>\n\n"
