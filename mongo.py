@@ -136,3 +136,6 @@ class Database:
 
     def get_current_price(self) -> float:
         return self.collection.find_one({'message_price': 'message_price'})['price']
+
+    def get_shop_status(self):
+        return self.collection.find_one({"shop_status": "shop_status"})['status']

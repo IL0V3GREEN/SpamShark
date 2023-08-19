@@ -28,10 +28,14 @@ class UserState(StatesGroup):
 
 @router.message(Command(commands="spam"))
 async def start_spam_creating(message: Message, state: FSMContext):
-    await message.answer(
-        "🌚 Выбери целевую аудиторию.",
-        reply_markup=choose_theme()
-    )
+    if db.get_shop_status() == "enabled":
+        await message.answer(
+            "🌚 Выбери целевую аудиторию.",
+            reply_markup=choose_theme()
+        )
+    else:
+        await message.answer("🪚 <b>Проводятся технические работы.</b>")
+
     await state.clear()
 
 
@@ -693,172 +697,175 @@ async def editing_buttons(call: CallbackQuery, state: FSMContext):
 async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: EditFactory, bot: Bot):
     data = await state.get_data()
 
-    if db.user_info(call.from_user.id)['balance'] >= (data['message_count'] * get_price(db.count_rating(call.from_user.id))):
-        number = random.randint(0, 9999)
-        db.create_spam_order(number, call.from_user.id, data['message_count'], data['spam_theme'])
-        db.update_string(
-            call.from_user.id,
-            {'balance': (db.user_info(call.from_user.id)['balance'] - (data['message_count'] * db.get_current_price()))}
-        )
-
-        if callback_data.text and callback_data.media and callback_data.url:
-            media = InputMedia(
-                type="photo",
-                media=f"{data['media']}",
-                caption=f"{data['text']}\n"
-                        f"-----------------------------------\n"
-                        f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
-
-            )
-            await call.message.edit_media(
-                media,
-                reply_markup=client_finish_buttons(data['inline'])
-            )
-            await bot.send_photo(
-                chat_id=6364771832,
-                photo=data['media'],
-                caption=f"{data['text']}\n"
-                        f"-----------------------------------\n"
-                        f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"message_id: <code>{call.message.message_id + 2}</code>",
-                reply_markup=admin_spam_start(
-                    call.from_user.id,
-                    number,
-                    data['inline'])
+    if db.get_shop_status() == "enabled":
+        if db.user_info(call.from_user.id)['balance'] >= (data['message_count'] * get_price(db.count_rating(call.from_user.id))):
+            number = random.randint(0, 9999)
+            db.create_spam_order(number, call.from_user.id, data['message_count'], data['spam_theme'])
+            db.update_string(
+                call.from_user.id,
+                {'balance': (db.user_info(call.from_user.id)['balance'] - (data['message_count'] * db.get_current_price()))}
             )
 
-        elif callback_data.text and callback_data.media and not callback_data.url:
-            media = InputMedia(
-                type="photo",
-                media=f"{data['media']}",
-                caption=f"{data['text']}\n"
-                        f"-----------------------------------\n"
-                        f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
-            )
-            await call.message.edit_media(media)
-            await bot.send_photo(
-                chat_id=6364771832,
-                photo=data['media'],
-                caption=f"{data['text']}\n"
-                        f"-----------------------------------\n"
-                        f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"message_id: <code>{call.message.message_id + 2}</code>",
-                reply_markup=admin_spam_start(
-                    call.from_user.id,
-                    number
+            if callback_data.text and callback_data.media and callback_data.url:
+                media = InputMedia(
+                    type="photo",
+                    media=f"{data['media']}",
+                    caption=f"{data['text']}\n"
+                            f"-----------------------------------\n"
+                            f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
+
                 )
-            )
-
-        elif callback_data.text and callback_data.url and not callback_data.media:
-            await call.message.edit_text(
-                f"{data['text']}\n"
-                f"-----------------------------------\n"
-                f"<b>#{number}\n\n</b>"
-                f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n\n"
-                f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n",
-                reply_markup=client_finish_buttons(data['inline'])
-            )
-            await bot.send_message(
-                6364771832,
-                f"{data['text']}\n"
-                f"-----------------------------------\n"
-                f"<b>#{number}\n\n</b>"
-                f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n\n"
-                f"message_id: <code>{call.message.message_id + 2}</code>",
-                reply_markup=admin_spam_start(
-                    call.from_user.id,
-                    number,
-                    data['inline'])
-            )
-
-        elif callback_data.media and callback_data.url and not callback_data.text:
-            media = InputMedia(
-                type="photo",
-                media=f"{data['media']}",
-                caption=f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
-            )
-            await call.message.edit_media(media, reply_markup=data['inline'])
-            await bot.send_photo(
-                chat_id=6364771832,
-                photo=data['media'],
-                caption=f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"message_id: <code>{call.message.message_id + 2}</code>",
-                reply_markup=admin_spam_start(
-                    call.from_user.id,
-                    number,
-                    data['inline'])
-            )
-
-        elif callback_data.media and not callback_data.text and not callback_data.url:
-            media = InputMedia(
-                type="photo",
-                media=f"{data['media']}",
-                caption=f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
-            )
-            await call.message.edit_media(media)
-            await bot.send_photo(
-                chat_id=6364771832,
-                photo=data['media'],
-                caption=f"<b>#{number}\n\n</b>"
-                        f"Аудитория: {data['spam_theme']}\n"
-                        f"Кол-во сообщений: {data['message_count']}\n\n"
-                        f"message_id: <code>{call.message.message_id + 2}</code>",
-                reply_markup=admin_spam_start(
-                    call.from_user.id,
-                    number
+                await call.message.edit_media(
+                    media,
+                    reply_markup=client_finish_buttons(data['inline'])
                 )
-            )
-
-        elif callback_data.text and not callback_data.media and not callback_data.url:
-            await call.message.edit_text(
-                f"{data['text']}\n"
-                f"-----------------------------------\n"
-                f"<b>#{number}\n\n</b>"
-                f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n\n"
-                f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
-            )
-            await bot.send_message(
-                6364771832,
-                f"{data['text']}\n"
-                f"-----------------------------------\n"
-                f"<b>#{number}\n\n</b>"
-                f"Аудитория: {data['spam_theme']}\n"
-                f"Кол-во сообщений: {data['message_count']}\n\n"
-                f"message_id: <code>{call.message.message_id + 2}</code>",
-                reply_markup=admin_spam_start(
-                    call.from_user.id,
-                    number
+                await bot.send_photo(
+                    chat_id=6364771832,
+                    photo=data['media'],
+                    caption=f"{data['text']}\n"
+                            f"-----------------------------------\n"
+                            f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"message_id: <code>{call.message.message_id + 2}</code>",
+                    reply_markup=admin_spam_start(
+                        call.from_user.id,
+                        number,
+                        data['inline'])
                 )
+
+            elif callback_data.text and callback_data.media and not callback_data.url:
+                media = InputMedia(
+                    type="photo",
+                    media=f"{data['media']}",
+                    caption=f"{data['text']}\n"
+                            f"-----------------------------------\n"
+                            f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
+                )
+                await call.message.edit_media(media)
+                await bot.send_photo(
+                    chat_id=6364771832,
+                    photo=data['media'],
+                    caption=f"{data['text']}\n"
+                            f"-----------------------------------\n"
+                            f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"message_id: <code>{call.message.message_id + 2}</code>",
+                    reply_markup=admin_spam_start(
+                        call.from_user.id,
+                        number
+                    )
+                )
+
+            elif callback_data.text and callback_data.url and not callback_data.media:
+                await call.message.edit_text(
+                    f"{data['text']}\n"
+                    f"-----------------------------------\n"
+                    f"<b>#{number}\n\n</b>"
+                    f"Аудитория: {data['spam_theme']}\n"
+                    f"Кол-во сообщений: {data['message_count']}\n\n"
+                    f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n",
+                    reply_markup=client_finish_buttons(data['inline'])
+                )
+                await bot.send_message(
+                    6364771832,
+                    f"{data['text']}\n"
+                    f"-----------------------------------\n"
+                    f"<b>#{number}\n\n</b>"
+                    f"Аудитория: {data['spam_theme']}\n"
+                    f"Кол-во сообщений: {data['message_count']}\n\n"
+                    f"message_id: <code>{call.message.message_id + 2}</code>",
+                    reply_markup=admin_spam_start(
+                        call.from_user.id,
+                        number,
+                        data['inline'])
+                )
+
+            elif callback_data.media and callback_data.url and not callback_data.text:
+                media = InputMedia(
+                    type="photo",
+                    media=f"{data['media']}",
+                    caption=f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
+                )
+                await call.message.edit_media(media, reply_markup=data['inline'])
+                await bot.send_photo(
+                    chat_id=6364771832,
+                    photo=data['media'],
+                    caption=f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"message_id: <code>{call.message.message_id + 2}</code>",
+                    reply_markup=admin_spam_start(
+                        call.from_user.id,
+                        number,
+                        data['inline'])
+                )
+
+            elif callback_data.media and not callback_data.text and not callback_data.url:
+                media = InputMedia(
+                    type="photo",
+                    media=f"{data['media']}",
+                    caption=f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
+                )
+                await call.message.edit_media(media)
+                await bot.send_photo(
+                    chat_id=6364771832,
+                    photo=data['media'],
+                    caption=f"<b>#{number}\n\n</b>"
+                            f"Аудитория: {data['spam_theme']}\n"
+                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"message_id: <code>{call.message.message_id + 2}</code>",
+                    reply_markup=admin_spam_start(
+                        call.from_user.id,
+                        number
+                    )
+                )
+
+            elif callback_data.text and not callback_data.media and not callback_data.url:
+                await call.message.edit_text(
+                    f"{data['text']}\n"
+                    f"-----------------------------------\n"
+                    f"<b>#{number}\n\n</b>"
+                    f"Аудитория: {data['spam_theme']}\n"
+                    f"Кол-во сообщений: {data['message_count']}\n\n"
+                    f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
+                )
+                await bot.send_message(
+                    6364771832,
+                    f"{data['text']}\n"
+                    f"-----------------------------------\n"
+                    f"<b>#{number}\n\n</b>"
+                    f"Аудитория: {data['spam_theme']}\n"
+                    f"Кол-во сообщений: {data['message_count']}\n\n"
+                    f"message_id: <code>{call.message.message_id + 2}</code>",
+                    reply_markup=admin_spam_start(
+                        call.from_user.id,
+                        number
+                    )
+                )
+
+            await state.clear()
+
+        else:
+            await call.message.answer(
+                f"📛 На твоем счету недостаточно средств.\n\n"
+                f"Пополни баланс - /profile или измени количество сообщений."
             )
-
-        await state.clear()
-
     else:
-        await call.message.answer(
-            f"📛 На твоем счету недостаточно средств.\n\n"
-            f"Пополни баланс - /profile или измени количество сообщений."
-        )
+        await call.message.answer("🪚 <b>Проводятся технические работы.</b>")
 
 
 @router.callback_query(F.data == "exitFromBuilder")
