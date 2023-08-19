@@ -33,7 +33,8 @@ async def change_shop_status(call: CallbackQuery):
     elif action == "stats":
         await call.message.edit_text(
             "<b>📊 Статистика</b>\n\n"
-            f"💶 <b>Профит</b>\n"
+            "<i>в статистике финансов, профит считается 'грязным'</i>"
+            f'💶 <b>Профит "грязный"</b>\n'
             f"├ <b>За сегодня</b>: <code>{db.earned_today()}</code>₽\n"
             f"├ <b>За 7 дней</b>: <code>{db.earned_week()}</code>₽\n"
             f"├ <b>За 30 дней</b>: <code>{db.earned_month()}</code>₽\n"
