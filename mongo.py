@@ -144,4 +144,4 @@ class Database:
         if Database().get_shop_status() == "enabled":
             self.collection.update_one({"shop_status": "shop_status"}, {'status': 'disabled'})
         elif Database().get_shop_status() == "disabled":
-            self.collection.update_one({"shop_status": "shop_status"}, {'status': 'enabled'})
+            self.collection.update_one({"shop_status": "shop_status"}, {"$set": {'status': 'enabled'}})
