@@ -209,7 +209,7 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
         count = message.text
         try:
             count = int(count)
-            if count <= 10000:
+            if count <= 20000:
                 await bot.delete_message(message.chat.id, message.message_id - 1)
                 await state.update_data(message_count=count)
                 data = await state.get_data()
@@ -286,7 +286,7 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     )
                     await state.set_state(UserState.client_text)
             else:
-                await message.answer("📛 Максимальное значение - 10.000")
+                await message.answer("📛 Максимальное значение - 20.000")
 
         except ValueError:
             await message.answer(
