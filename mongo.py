@@ -45,7 +45,7 @@ class Database:
             {"$set": string}
         )
 
-    def create_spam_order(self, order_uid, user_id, value: int, theme, price: int | float):
+    def create_spam_order(self, order_uid, user_id, value: int, theme, price):
         self.orders.insert_one(
             {
                 'order_uid': order_uid,
