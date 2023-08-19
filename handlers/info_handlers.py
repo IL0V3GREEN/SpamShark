@@ -39,7 +39,7 @@ async def info_handling(call: CallbackQuery):
             reply_markup=rating_buttons()
         )
 
-    elif thing == "stats":
+    elif thing == "top":
         await call.message.edit_text(
             "⚔️ <b>ТОП-10 по рейтингу</b>\n\n"
             f"{db.top_rating_list()}",
