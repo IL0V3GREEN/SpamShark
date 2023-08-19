@@ -41,7 +41,8 @@ async def info_handling(call: CallbackQuery):
 
     elif thing == "stats":
         await call.message.edit_text(
-            "⚔️ <b>ТОП-10 по рейтингу</b>\n\n",
+            "⚔️ <b>ТОП-10 по рейтингу</b>\n\n"
+            f"{db.top_rating_list()}",
             reply_markup=back_from_stats()
         )
 

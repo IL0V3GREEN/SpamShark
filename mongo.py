@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime, timedelta
+from operator import itemgetter
 import pytz
 
 
@@ -110,11 +111,22 @@ class Database:
 
     def top_rating_list(self):
         all_users = list(self.collection.find())
-        rate_tuple = {}
+        users = []
+        string = ""
         for i in all_users:
-            rate_tuple.update({i['username']: Database().count_rating(i['user_id'])})
+            try:
+                users.append({'username': i['username'], 'rating': Database().count_rating(i['user_id'])})
+            except KeyError:
+                pass
+        result = sorted(users, key=itemgetter('rating'), reverse=True)
+        if len(result) >= 10:
+            for count in range(0, 10):
+                string += f"{count + 1}. {result[count]['username']} - <code>{result[count]['rating']}</code> 🏆\n"
+        else:
+            for count in range(len(result)):
+                string += f"{count + 1}. {result[count]['username']} - <code>{result[count]['rating']}</code> 🏆\n"
 
-        print(rate_tuple)
+        return string
 
     def count_referrals(self, user_id) -> int:
         return len(list(self.collection.find({'ref_id': user_id})))
