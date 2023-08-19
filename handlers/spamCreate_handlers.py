@@ -298,6 +298,10 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
         await message.answer(
             f"🥷🏻 <b>Твой профиль!</b>\n"
             f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
+            f"├ 📆 <b>Дата входа:</b> "
+            f"<code>{db.user_info(message.from_user.id)['date']['day']}."
+            f"{db.user_info(message.from_user.id)['date']['month']}."
+            f"{db.user_info(message.from_user.id)['date']['year']}</code>\n"
             f"├ 💳 <b>Реквизиты:</b> <code>{get_reqs(message.from_user.id)}</code>\n"
             f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(message.from_user.id)['balance']:.1f}</code>₽\n\n"
             f"📦 <b>Заказы</b>\n"
@@ -454,6 +458,10 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
         await message.answer(
             f"🥷🏻 <b>Твой профиль!</b>\n"
             f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
+            f"├ 📆 <b>Дата входа:</b> "
+            f"<code>{db.user_info(message.from_user.id)['date']['day']}."
+            f"{db.user_info(message.from_user.id)['date']['month']}."
+            f"{db.user_info(message.from_user.id)['date']['year']}</code>\n"
             f"├ 💳 <b>Реквизиты:</b> <code>{get_reqs(message.from_user.id)}</code>\n"
             f"└ 🧊 <b>Баланс:</b> <code>{db.user_info(message.from_user.id)['balance']:.1f}</code>₽\n\n"
             f"📦 <b>Заказы</b>\n"

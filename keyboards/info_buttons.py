@@ -57,6 +57,20 @@ def rating_buttons():
     return builder.as_markup()
 
 
+def review_buttons():
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="📌 Тема на LOLZ",
+        url='https://zelenka.guru/threads/5714798/'
+    )
+    builder.button(
+        text="🔙 Назад",
+        callback_data="rating_back"
+    )
+    builder.adjust(1)
+    return builder.as_markup()
+
+
 def how_to_increase_button():
     builder = InlineKeyboardBuilder()
     builder.button(

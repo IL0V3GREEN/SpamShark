@@ -2,7 +2,7 @@ from aiogram.filters import Command
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from keyboards.info_buttons import main_info_buttons, rating_buttons, \
-    how_to_increase_button, back_from_stats
+    how_to_increase_button, back_from_stats, review_buttons
 from mongo import Database
 
 
@@ -47,7 +47,10 @@ async def info_handling(call: CallbackQuery):
         )
 
     elif thing == "review":
-        pass
+        await call.message.edit_text(
+            "",
+            reply_markup=review_buttons()
+        )
 
 
 @router.callback_query(F.data.startswith("topmake"))
