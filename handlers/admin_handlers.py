@@ -1,10 +1,10 @@
-from aiogram import F, Router, Bot
+import requests
+from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from keyboards.adm_buttons import main_menu, adm_back_from_stats
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from aiogram.exceptions import TelegramBadRequest
 from mongo import Database
 
 
@@ -69,17 +69,19 @@ async def back_from_adm_stats(call: CallbackQuery):
 
 
 @router.callback_query(AdminStates.message_to_all, F.text)
-async def messaging_to_all(message: Message, state: FSMContext, bot: Bot):
+async def messaging_to_all(message: Message, state: FSMContext):
     user_lists = list(db.collection.find())
     for user in user_lists:
-        try:
-            await bot.send_message(
-                user['user_id'],
-                message.text
-            )
-        except TelegramBadRequest:
-            pass
-        
+        params = {
+            'chat_id': user['user_id'],
+            'text': message.text
+        }
+        resp = requests.post(
+            "https://api.telegram.org/bot6249367873:AAFra-Kvtu6i1V9lS8kvx_9J8-XGxDTxCI8/sendMessage",
+            params=params
+        )
+        await message.answer(f"{resp}")
+
     await message.answer(
         "👨🏻‍💻 <b>Админ панель</b>\n\n"
         "  - Смена статуса шопа\n"
