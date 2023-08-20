@@ -893,6 +893,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"<b>#{number}\n\n</b>"
                             f"Аудитория: {data['spam_theme']}\n"
                             f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: <code>{call.message.message_id + 2}</code>",
                     reply_markup=admin_spam_start(
                         call.from_user.id,
@@ -920,6 +921,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"<b>#{number}\n\n</b>"
                             f"Аудитория: {data['spam_theme']}\n"
                             f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: <code>{call.message.message_id + 2}</code>",
                     reply_markup=admin_spam_start(
                         call.from_user.id,
@@ -967,6 +969,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     caption=f"<b>#{number}\n\n</b>"
                             f"Аудитория: {data['spam_theme']}\n"
                             f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: <code>{call.message.message_id + 2}</code>",
                     reply_markup=admin_spam_start(
                         call.from_user.id,
@@ -990,6 +993,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     caption=f"<b>#{number}\n\n</b>"
                             f"Аудитория: {data['spam_theme']}\n"
                             f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: <code>{call.message.message_id + 2}</code>",
                     reply_markup=admin_spam_start(
                         call.from_user.id,
