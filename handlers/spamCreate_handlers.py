@@ -960,7 +960,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"Кол-во сообщений: {data['message_count']}\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда начнется рассылка</i>\n"
                 )
-                await call.message.edit_media(media, reply_markup=data['inline'])
+                await call.message.edit_media(media, reply_markup=client_finish_buttons(data['inline']))
                 await bot.send_photo(
                     chat_id=6364771832,
                     photo=data['media'],
