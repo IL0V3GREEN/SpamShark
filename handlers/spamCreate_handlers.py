@@ -943,6 +943,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -967,6 +968,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -1008,6 +1010,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     caption=f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -1028,6 +1031,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     caption=f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
