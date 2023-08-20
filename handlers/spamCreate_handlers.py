@@ -945,7 +945,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_start()
+                    reply_markup=admin_spam_end()
                 )
 
             elif callback_data.text and callback_data.media and not callback_data.url:
@@ -970,7 +970,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_start()
+                    reply_markup=admin_spam_end()
                 )
 
             elif callback_data.text and callback_data.url and not callback_data.media:
@@ -991,7 +991,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
                     f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                     f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_start()
+                    reply_markup=admin_spam_end()
                 )
 
             elif callback_data.media and callback_data.url and not callback_data.text:
@@ -1012,7 +1012,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_start()
+                    reply_markup=admin_spam_end()
                 )
 
             elif callback_data.media and not callback_data.text and not callback_data.url:
@@ -1033,7 +1033,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_start()
+                    reply_markup=admin_spam_end()
                 )
 
             elif callback_data.text and not callback_data.media and not callback_data.url:
@@ -1053,7 +1053,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
                     f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                     f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_start()
+                    reply_markup=admin_spam_end()
                 )
             await state.clear()
 
@@ -1074,11 +1074,6 @@ async def exiting_from_builder(call: CallbackQuery, state: FSMContext):
         '<i>Чтобы воспользоваться функциями <b>SpamShark</b> еще раз, нажми кнопку <b>"Меню"</b></i>\n\n'
     )
     await state.clear()
-
-
-@router.callback_query(F.data == "startspam")
-async def starting_spam(call: CallbackQuery):
-    await call.message.edit_reply_markup(reply_markup=admin_spam_end())
 
 
 @router.callback_query(F.data == "endSpam")
