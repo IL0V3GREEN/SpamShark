@@ -328,9 +328,9 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
     text = await check_text(data)
     buttons = await check_inline(data)
 
-    await bot.delete_message(message.chat.id, message.message_id - 1)
     if text and buttons:
         try:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer_photo(
                 message.photo[0].file_id,
                 caption=data['text'],
@@ -350,6 +350,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             )
     elif text and not buttons:
         try:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer_photo(
                 message.photo[0].file_id,
                 caption=data['text'],
@@ -369,6 +370,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
 
     elif not text and buttons:
         try:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer_photo(
                 message.photo[0].file_id,
                 reply_markup=edit_sets(
@@ -387,6 +389,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             )
     else:
         try:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer_photo(
                 message.photo[0].file_id,
                 reply_markup=edit_sets(
@@ -413,8 +416,8 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
         media = await check_media(data)
         buttons = await check_inline(data)
 
-        await bot.delete_message(message.chat.id, message.message_id - 1)
         if media and buttons:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer_photo(
                 photo=data['media'],
                 caption=message.text,
@@ -425,6 +428,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             await state.update_data(text=message.text)
 
         elif media and not buttons:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer_photo(
                 photo=data['media'],
                 caption=message.text,
@@ -433,7 +437,9 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
                 )
             )
             await state.update_data(text=message.text)
+
         elif not media and buttons:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer(
                 message.text,
                 reply_markup=edit_sets(
@@ -443,6 +449,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             await state.update_data(text=message.text)
 
         elif not media and not buttons:
+            await bot.delete_message(message.chat.id, message.message_id - 1)
             await message.answer(
                 message.text,
                 reply_markup=edit_sets(
