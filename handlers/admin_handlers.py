@@ -1,12 +1,18 @@
-from aiogram import F, Router
+from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from keyboards.adm_buttons import main_menu, adm_back_from_stats
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
 from mongo import Database
 
 
 db = Database()
 router = Router()
+
+
+class AdminStates(StatesGroup):
+    message_to_all = State()
 
 
 @router.message(Command(commands="adm"))
@@ -34,7 +40,6 @@ async def change_shop_status(call: CallbackQuery):
     elif action == "stats":
         await call.message.edit_text(
             "<b>📊 Статистика</b>\n\n"
-            "<i>в статистике финансов, профит считается 'грязным'</i>\n\n"
             f'💶 <b>Профит "грязный"</b>\n'
             f"├ <b>За сегодня</b>: <code>{db.earned_today()}</code>₽\n"
             f"├ <b>За 7 дней</b>: <code>{db.earned_week()}</code>₽\n"
@@ -47,6 +52,8 @@ async def change_shop_status(call: CallbackQuery):
             f"└ <b>Всего</b>: <code>{len(list(db.collection.find()))}</code>\n\n",
             reply_markup=adm_back_from_stats()
         )
+    elif action == "message":
+        await call.message.edit_text("Введи текст рассылки:")
 
 
 @router.callback_query(F.data == "admback")
@@ -57,3 +64,15 @@ async def back_from_adm_stats(call: CallbackQuery):
         "  - Общая статистика",
         reply_markup=main_menu(db.get_shop_status())
     )
+
+
+@router.callback_query(AdminStates.message_to_all, F.text)
+async def messaging_to_all(message: Message, state: FSMContext, bot: Bot):
+    user_lists = list(db.collection.find())
+    for user in user_lists:
+        await bot.send_message(
+            user['user_id'],
+            message.text
+        )
+
+    await state.clear()

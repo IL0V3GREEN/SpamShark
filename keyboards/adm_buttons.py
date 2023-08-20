@@ -17,6 +17,10 @@ def main_menu(status):
         text="📊 Статистика",
         callback_data="admpanel_stats"
     )
+    builder.button(
+        text="✉️ Создать рассылку",
+        callback_data="admpanel_message"
+    )
     builder.adjust(1)
     return builder.as_markup()
 
