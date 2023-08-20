@@ -84,17 +84,11 @@ def client_finish_buttons(url: list):
     return builder.as_markup()
 
 
-def admin_spam_start(user_id, order_uid, url: list or None = None):
+def admin_spam_start():
     builder = InlineKeyboardBuilder()
-    if url is not None:
-        for i in url:
-            builder.button(
-                text=f"{(i.split('-')[0])[:-1]}",
-                url=f"{(i.split('-')[1])[1:]}"
-            )
     builder.button(
         text="Приступить спамить",
-        callback_data=f"startspam_{user_id}_{order_uid}"
+        callback_data=f"startspam"
     )
     builder.adjust(1)
     return builder.as_markup()
