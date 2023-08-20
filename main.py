@@ -16,16 +16,16 @@ MAIN_BOT_PATH = "/main.py"
 
 
 logging.basicConfig(level=logging.INFO)
+session = AiohttpSession()
+bot_settings = {"session": session, "parse_mode": "HTML"}
+bot = Bot(token=MAIN_BOT_TOKEN, **bot_settings)
 
 
-async def on_startup(bot: Bot):
+async def on_startup():
     await bot.set_webhook(f"{BASE_URL}{MAIN_BOT_PATH}")
 
 
 def main():
-    session = AiohttpSession()
-    bot_settings = {"session": session, "parse_mode": "HTML"}
-    bot = Bot(token=MAIN_BOT_TOKEN, **bot_settings)
     dp = Dispatcher()
     dp.message.middleware.register(deleting_message.DeletingMessage())
     dp.include_router(start_handler.router)

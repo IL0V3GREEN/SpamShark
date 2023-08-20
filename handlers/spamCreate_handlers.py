@@ -925,9 +925,9 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     media=f"{data['media']}",
                     caption=f"{data['text']}\n"
                             f"-----------------------------------\n"
-                            f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
 
                 )
@@ -940,9 +940,9 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     photo=data['media'],
                     caption=f"{data['text']}\n"
                             f"-----------------------------------\n"
-                            f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n"
+                            f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -953,9 +953,9 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     media=f"{data['media']}",
                     caption=f"{data['text']}\n"
                             f"-----------------------------------\n"
-                            f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                            f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await call.message.edit_media(media)
@@ -964,9 +964,9 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     photo=data['media'],
                     caption=f"{data['text']}\n"
                             f"-----------------------------------\n"
-                            f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n"
+                            f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -975,9 +975,9 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 await call.message.edit_text(
                     f"{data['text']}\n"
                     f"-----------------------------------\n"
-                    f"<b>#{number}\n\n</b>"
-                    f"Аудитория: {data['spam_theme']}\n"
-                    f"Кол-во сообщений: {data['message_count']}\n\n"
+                    f"<b>#{number}\n</b>"
+                    f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                    f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                     f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n",
                     reply_markup=client_finish_buttons(data['inline'])
                 )
@@ -985,9 +985,9 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     6364771832,
                     f"{data['text']}\n"
                     f"-----------------------------------\n"
-                    f"<b>#{number}\n\n</b>"
-                    f"Аудитория: {data['spam_theme']}\n"
-                    f"Кол-во сообщений: {data['message_count']}\n"
+                    f"<b>#{number}\n</b>"
+                    f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                    f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                     f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -996,18 +996,18 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 media = InputMedia(
                     type="photo",
                     media=f"{data['media']}",
-                    caption=f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                    caption=f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await call.message.edit_media(media, reply_markup=client_finish_buttons(data['inline']))
                 await bot.send_photo(
                     chat_id=6364771832,
                     photo=data['media'],
-                    caption=f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n"
+                    caption=f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -1016,18 +1016,18 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 media = InputMedia(
                     type="photo",
                     media=f"{data['media']}",
-                    caption=f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n\n"
+                    caption=f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await call.message.edit_media(media)
                 await bot.send_photo(
                     chat_id=6364771832,
                     photo=data['media'],
-                    caption=f"<b>#{number}\n\n</b>"
-                            f"Аудитория: {data['spam_theme']}\n"
-                            f"Кол-во сообщений: {data['message_count']}\n"
+                    caption=f"<b>#{number}\n</b>"
+                            f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )
@@ -1036,18 +1036,18 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                 await call.message.edit_text(
                     f"{data['text']}\n"
                     f"-----------------------------------\n"
-                    f"<b>#{number}\n\n</b>"
-                    f"Аудитория: {data['spam_theme']}\n"
-                    f"Кол-во сообщений: {data['message_count']}\n\n"
+                    f"<b>#{number}\n</b>"
+                    f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                    f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                     f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await bot.send_message(
                     6364771832,
                     f"{data['text']}\n"
                     f"-----------------------------------\n"
-                    f"<b>#{number}\n\n</b>"
-                    f"Аудитория: {data['spam_theme']}\n"
-                    f"Кол-во сообщений: {data['message_count']}\n"
+                    f"<b>#{number}\n</b>"
+                    f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
+                    f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                     f"message_id: {call.message.message_id}\n",
                     reply_markup=admin_spam_start()
                 )

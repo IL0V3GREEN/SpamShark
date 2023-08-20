@@ -13,7 +13,9 @@ class EditFactory(CallbackData, prefix="editfab"):
     media: bool
 
 
-def edit_sets(user_id: int, text: bool, media: bool, url: bool, theme: str, count: int, url_buttons: list or None = None):
+def edit_sets(
+        user_id: int, text: bool, media: bool, url: bool, theme: str, count: int, url_buttons: list or None = None
+):
     builder = InlineKeyboardBuilder()
     if url is True:
         if url_buttons is not None:

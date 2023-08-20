@@ -74,5 +74,10 @@ async def messaging_to_all(message: Message, state: FSMContext, bot: Bot):
             user['user_id'],
             message.text
         )
-
+    await message.answer(
+        "👨🏻‍💻 <b>Админ панель</b>\n\n"
+        "  - Смена статуса шопа\n"
+        "  - Общая статистика",
+        reply_markup=main_menu(db.get_shop_status())
+    )
     await state.clear()
