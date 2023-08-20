@@ -1,7 +1,7 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 from mongo import Database
-
+from utils.profille_functions import get_price
 
 db = Database()
 
@@ -13,7 +13,7 @@ class EditFactory(CallbackData, prefix="editfab"):
     media: bool
 
 
-def edit_sets(text: bool, media: bool, url: bool, theme: str, count: int, url_buttons: list or None = None):
+def edit_sets(user_id: int, text: bool, media: bool, url: bool, theme: str, count: int, url_buttons: list or None = None):
     builder = InlineKeyboardBuilder()
     if url is True:
         if url_buttons is not None:
@@ -58,7 +58,7 @@ def edit_sets(text: bool, media: bool, url: bool, theme: str, count: int, url_bu
         callback_data="spambuild_theme"
     )
     builder.button(
-        text=f"Кол-во сообщений: {count} ({db.get_current_price() * count}₽)",
+        text=f"Кол-во сообщений: {count} ({get_price(db.count_rating(user_id)) * count}₽)",
         callback_data="spambuild_count"
     )
     builder.button(
