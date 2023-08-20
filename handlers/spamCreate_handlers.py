@@ -55,7 +55,13 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
             photo=data['media'],
             caption=data['text'],
             reply_markup=edit_sets(
-                True, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                call.from_user.id,
+                True,
+                True,
+                True,
+                data['spam_theme'],
+                data['message_count'],
+                url_buttons=data['inline']
             )
         )
         await state.set_state(UserState.client_text)
@@ -66,7 +72,7 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
             photo=data['media'],
             caption=data['text'],
             reply_markup=edit_sets(
-                True, True, False, data['spam_theme'], data['message_count']
+                call.from_user.id, True, True, False, data['spam_theme'], data['message_count']
             )
         )
         await state.set_state(UserState.client_text)
@@ -75,7 +81,13 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text(
             data['text'],
             reply_markup=edit_sets(
-                True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                call.from_user.id,
+                True,
+                False,
+                True,
+                data['spam_theme'],
+                data['message_count'],
+                url_buttons=data['inline']
             )
         )
         await state.set_state(UserState.client_text)
@@ -85,7 +97,13 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
         await call.message.answer_photo(
             photo=data['media'],
             reply_markup=edit_sets(
-                False, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                call.from_user.id,
+                False,
+                True,
+                True,
+                data['spam_theme'],
+                data['message_count'],
+                url_buttons=data['inline']
             )
         )
         await state.set_state(UserState.client_text)
@@ -95,7 +113,12 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
         await call.message.answer_photo(
             photo=data['media'],
             reply_markup=edit_sets(
-                False, True, False, data['spam_theme'], data['message_count']
+                call.from_user.id,
+                False,
+                True,
+                False,
+                data['spam_theme'],
+                data['message_count']
             )
         )
         await state.set_state(UserState.client_text)
@@ -104,7 +127,12 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text(
             data['text'],
             reply_markup=edit_sets(
-                True, False, False, data['spam_theme'], data['message_count']
+                call.from_user.id,
+                True,
+                False,
+                False,
+                data['spam_theme'],
+                data['message_count']
             )
         )
         await state.set_state(UserState.client_text)
@@ -135,7 +163,13 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
                 photo=data['media'],
                 caption=data['text'],
                 reply_markup=edit_sets(
-                    True, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    call.from_user.id,
+                    True,
+                    True,
+                    True,
+                    data['spam_theme'],
+                    data['message_count'],
+                    url_buttons=data['inline']
                 )
             )
             await state.set_state(UserState.client_text)
@@ -146,7 +180,12 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
                 photo=data['media'],
                 caption=data['text'],
                 reply_markup=edit_sets(
-                    True, True, False, data['spam_theme'], data['message_count']
+                    call.from_user.id,
+                    True,
+                    True,
+                    False,
+                    data['spam_theme'],
+                    data['message_count']
                 )
             )
             await state.set_state(UserState.client_text)
@@ -155,7 +194,13 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
             await call.message.edit_text(
                 data['text'],
                 reply_markup=edit_sets(
-                    True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    call.from_user.id,
+                    True,
+                    False,
+                    True,
+                    data['spam_theme'],
+                    data['message_count'],
+                    url_buttons=data['inline']
                 )
             )
             await state.set_state(UserState.client_text)
@@ -165,7 +210,13 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
             await call.message.answer_photo(
                 photo=data['media'],
                 reply_markup=edit_sets(
-                    False, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    call.from_user.id,
+                    False,
+                    True,
+                    True,
+                    data['spam_theme'],
+                    data['message_count'],
+                    url_buttons=data['inline']
                 )
             )
             await state.set_state(UserState.client_text)
@@ -175,7 +226,12 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
             await call.message.answer_photo(
                 photo=data['media'],
                 reply_markup=edit_sets(
-                    False, True, False, data['spam_theme'], data['message_count']
+                    call.from_user.id,
+                    False,
+                    True,
+                    False,
+                    data['spam_theme'],
+                    data['message_count']
                 )
             )
             await state.set_state(UserState.client_text)
@@ -184,7 +240,12 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
             await call.message.edit_text(
                 data['text'],
                 reply_markup=edit_sets(
-                    True, False, False, data['spam_theme'], data['message_count']
+                    call.from_user.id,
+                    True,
+                    False,
+                    False,
+                    data['spam_theme'],
+                    data['message_count']
                 )
             )
             await state.set_state(UserState.client_text)
@@ -225,7 +286,13 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                         photo=data['media'],
                         caption=data['text'],
                         reply_markup=edit_sets(
-                            True, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                            message.from_user.id,
+                            True,
+                            True,
+                            True,
+                            data['spam_theme'],
+                            data['message_count'],
+                            url_buttons=data['inline']
                         )
                     )
                     await state.set_state(UserState.client_text)
@@ -236,7 +303,12 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                         photo=data['media'],
                         caption=data['text'],
                         reply_markup=edit_sets(
-                            True, True, False, data['spam_theme'], data['message_count']
+                            message.from_user.id,
+                            True,
+                            True,
+                            False,
+                            data['spam_theme'],
+                            data['message_count']
                         )
                     )
                     await state.set_state(UserState.client_text)
@@ -245,7 +317,13 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await message.edit_text(
                         data['text'],
                         reply_markup=edit_sets(
-                            True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                            message.from_user.id,
+                            True,
+                            False,
+                            True,
+                            data['spam_theme'],
+                            data['message_count'],
+                            url_buttons=data['inline']
                         )
                     )
                     await state.set_state(UserState.client_text)
@@ -255,7 +333,13 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await message.answer_photo(
                         photo=data['media'],
                         reply_markup=edit_sets(
-                            False, True, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                            message.from_user.id,
+                            False,
+                            True,
+                            True,
+                            data['spam_theme'],
+                            data['message_count'],
+                            url_buttons=data['inline']
                         )
                     )
                     await state.set_state(UserState.client_text)
@@ -265,7 +349,12 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await message.answer_photo(
                         photo=data['media'],
                         reply_markup=edit_sets(
-                            False, True, False, data['spam_theme'], data['message_count']
+                            message.from_user.id,
+                            False,
+                            True,
+                            False,
+                            data['spam_theme'],
+                            data['message_count']
                         )
                     )
                     await state.set_state(UserState.client_text)
@@ -274,7 +363,12 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await message.edit_text(
                         data['text'],
                         reply_markup=edit_sets(
-                            True, False, False, data['spam_theme'], data['message_count']
+                            message.from_user.id,
+                            True,
+                            False,
+                            False,
+                            data['spam_theme'],
+                            data['message_count']
                         )
                     )
                     await state.set_state(UserState.client_text)
@@ -354,6 +448,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
                 message.photo[0].file_id,
                 caption=data['text'],
                 reply_markup=edit_sets(
+                    message.from_user.id,
                     True,
                     True,
                     False,
@@ -372,6 +467,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             await message.answer_photo(
                 message.photo[0].file_id,
                 reply_markup=edit_sets(
+                    message.from_user.id,
                     False,
                     True,
                     True,
@@ -390,6 +486,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             await message.answer_photo(
                 message.photo[0].file_id,
                 reply_markup=edit_sets(
+                    message.from_user.id,
                     False,
                     True,
                     False,
@@ -419,7 +516,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
                 photo=data['media'],
                 caption=message.text,
                 reply_markup=edit_sets(
-                    True, True, True, data['spam_theme'], data['message_count'], data['inline']
+                    message.from_user.id, True, True, True, data['spam_theme'], data['message_count'], data['inline']
                 )
             )
             await state.update_data(text=message.text)
@@ -429,7 +526,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
                 photo=data['media'],
                 caption=message.text,
                 reply_markup=edit_sets(
-                    True, True, False, data['spam_theme'], data['message_count']
+                    message.from_user.id, True, True, False, data['spam_theme'], data['message_count']
                 )
             )
             await state.update_data(text=message.text)
@@ -437,7 +534,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             await message.answer(
                 message.text,
                 reply_markup=edit_sets(
-                    True, False, True, data['spam_theme'], data['message_count'], data['inline']
+                    message.from_user.id, True, False, True, data['spam_theme'], data['message_count'], data['inline']
                 )
             )
             await state.update_data(text=message.text)
@@ -446,7 +543,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             await message.answer(
                 message.text,
                 reply_markup=edit_sets(
-                    True, False, False, data['spam_theme'], data['message_count']
+                    message.from_user.id, True, False, False, data['spam_theme'], data['message_count']
                 )
             )
             await state.update_data(text=message.text)
@@ -498,6 +595,7 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
             await call.message.edit_media(
                 media,
                 reply_markup=edit_sets(
+                    call.from_user.id,
                     False,
                     True,
                     True,
@@ -514,6 +612,7 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
             await call.message.edit_media(
                 media,
                 reply_markup=edit_sets(
+                    call.from_user.id,
                     False,
                     True,
                     False,
@@ -544,14 +643,27 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
             await call.message.answer(
                 data['text'],
                 reply_markup=edit_sets(
-                    True, False, True, data['spam_theme'], data['message_count'], url_buttons=data['inline']
+                    call.from_user.id,
+                    True,
+                    False,
+                    True,
+                    data['spam_theme'],
+                    data['message_count'],
+                    url_buttons=data['inline']
                 )
             )
         elif callback_data.text and not callback_data.url:
             await call.message.delete()
             await call.message.answer(
                 data['text'],
-                reply_markup=edit_sets(True, False, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(
+                    call.from_user.id,
+                    True,
+                    False,
+                    False,
+                    data['spam_theme'],
+                    data['message_count']
+                )
             )
 
         elif not callback_data.text:
@@ -581,16 +693,16 @@ async def text_editing(call: CallbackQuery, callback_data: EditFactory, state: F
     elif action == "delete":
         if callback_data.text and callback_data.media:
             await call.message.edit_reply_markup(
-                reply_markup=edit_sets(True, True, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(call.from_user.id, True, True, False, data['spam_theme'], data['message_count'])
             )
         elif callback_data.text and not callback_data.media:
             await call.message.edit_reply_markup(
-                reply_markup=edit_sets(True, False, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(call.from_user.id, True, False, False, data['spam_theme'], data['message_count'])
             )
 
         elif not callback_data.text and callback_data.media:
             await call.message.edit_reply_markup(
-                reply_markup=edit_sets(False, True, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(call.from_user.id, False, True, False, data['spam_theme'], data['message_count'])
             )
     await state.update_data(inline="")
 
@@ -613,7 +725,13 @@ async def getting_inline_buttons(message: Message, state: FSMContext, bot: Bot):
                     photo=f"{data['media']}",
                     caption=f"{data['text']}",
                     reply_markup=edit_sets(
-                        True, True, True, data['spam_theme'], data['message_count'], url_buttons=links
+                        message.from_user.id,
+                        True,
+                        True,
+                        True,
+                        data['spam_theme'],
+                        data['message_count'],
+                        url_buttons=links
                     )
                 )
                 await state.set_state(UserState.client_text)
@@ -629,7 +747,13 @@ async def getting_inline_buttons(message: Message, state: FSMContext, bot: Bot):
                 await message.answer_photo(
                     photo=data['media'],
                     reply_markup=edit_sets(
-                        False, True, True, data['spam_theme'], data['message_count'], url_buttons=links
+                        message.from_user.id,
+                        False,
+                        True,
+                        True,
+                        data['spam_theme'],
+                        data['message_count'],
+                        url_buttons=links
                     )
                 )
                 await state.set_state(UserState.client_text)
@@ -645,7 +769,13 @@ async def getting_inline_buttons(message: Message, state: FSMContext, bot: Bot):
                 await message.answer(
                     data['text'],
                     reply_markup=edit_sets(
-                        True, False, True, data['spam_theme'], data['message_count'], url_buttons=links
+                        message.from_user.id,
+                        True,
+                        False,
+                        True,
+                        data['spam_theme'],
+                        data['message_count'],
+                        url_buttons=links
                     )
                 )
                 await state.set_state(UserState.client_text)
@@ -663,21 +793,41 @@ async def getting_inline_buttons(message: Message, state: FSMContext, bot: Bot):
             await message.answer_photo(
                 photo=f"{data['media']}",
                 caption=f"{data['text']}",
-                reply_markup=edit_sets(True, True, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(
+                    message.from_user.id,
+                    True,
+                    True,
+                    False,
+                    data['spam_theme'],
+                    data['message_count']
+                )
             )
             await state.set_state(UserState.client_text)
 
         elif media and not text:
             await message.answer_photo(
                 photo=data['media'],
-                reply_markup=edit_sets(False, True, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(
+                    message.from_user.id,
+                    False,
+                    True,
+                    False,
+                    data['spam_theme'],
+                    data['message_count']
+                )
             )
             await state.set_state(UserState.client_text)
 
         elif text and not media:
             await message.answer(
                 data['text'],
-                reply_markup=edit_sets(True, False, False, data['spam_theme'], data['message_count'])
+                reply_markup=edit_sets(
+                    message.from_user.id,
+                    True,
+                    False,
+                    False,
+                    data['spam_theme'],
+                    data['message_count'])
             )
             await state.set_state(UserState.client_text)
 
