@@ -197,8 +197,7 @@ class Database:
         return messages
 
     def count_rating(self, user_id) -> int:
-        return len(list(self.orders.find({'user_id': user_id}))) + \
-            len(list(self.collection.find({'ref_id': user_id}))) * 10
+        return Database().count_referrals(user_id) + len(list(self.collection.find({'ref_id': user_id}))) * 10
 
     def top_rating_list(self):
         all_users = list(self.collection.find())
@@ -209,10 +208,10 @@ class Database:
         result = sorted(users, key=itemgetter('rating'), reverse=True)
         if len(result) >= 10:
             for count in range(0, 10):
-                string += f"{count + 1}. {result[count]['username']} - <code>{result[count]['rating']}</code> 🏆\n"
+                string += f"{count + 1}. <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
         else:
             for count in range(len(result)):
-                string += f"{count + 1}. {result[count]['username']} - <code>{result[count]['rating']}</code> 🏆\n"
+                string += f"{count + 1}. <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
 
         return string
 
