@@ -1,10 +1,10 @@
-import requests
 from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from keyboards.adm_buttons import main_menu, adm_back_from_stats
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import TelegramBadRequest
 from mongo import Database
 
 
@@ -28,7 +28,7 @@ async def admin_panel(message: Message):
 
 
 @router.callback_query(F.data.startswith("admpanel"))
-async def change_shop_status(call: CallbackQuery):
+async def change_shop_status(call: CallbackQuery, state: FSMContext):
     action = call.data.split("_")[1]
     if action == "statuschange":
         db.change_shop_status()
@@ -55,6 +55,7 @@ async def change_shop_status(call: CallbackQuery):
         )
     elif action == "message":
         await call.message.edit_text("Введи текст рассылки:")
+        await state.set_state(AdminStates.message_to_all)
 
 
 @router.callback_query(F.data == "admback")
@@ -68,19 +69,17 @@ async def back_from_adm_stats(call: CallbackQuery):
 
 
 @router.callback_query(AdminStates.message_to_all, F.text)
-async def messaging_to_all(message: Message, state: FSMContext):
+async def messaging_to_all(message: Message, state: FSMContext, bot: Bot):
     user_lists = list(db.collection.find())
     for user in user_lists:
-        params = {
-            'chat_id': user['user_id'],
-            'text': message.text
-        }
-        resp = requests.post(
-            "https://api.telegram.org/bot6249367873:AAFra-Kvtu6i1V9lS8kvx_9J8-XGxDTxCI8/sendMessage",
-            params=params
-        )
-        await message.answer(f"{resp}")
-
+        try:
+            await bot.send_message(
+                user['user_id'],
+                message.text
+            )
+        except TelegramBadRequest:
+            pass
+        
     await message.answer(
         "👨🏻‍💻 <b>Админ панель</b>\n\n"
         "  - Смена статуса шопа\n"
