@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from keyboards.profile_buttons import deposit_menu
-from keyboards.spamCreator_buttons import edit_sets, EditFactory, admin_spam_start, client_finish_buttons, \
+from keyboards.spamCreator_buttons import edit_sets, EditFactory, client_finish_buttons, \
     choose_theme, choose_count, admin_spam_end
 from utils.check_state import check_text, check_media, check_inline
 from mongo import Database
@@ -318,7 +318,8 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await state.set_state(UserState.client_text)
                 # text & buttons
                 elif text and buttons and not media:
-                    await message.edit_text(
+                    await message.delete()
+                    await message.answer(
                         data['text'],
                         reply_markup=edit_sets(
                             message.from_user.id,
@@ -364,7 +365,8 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await state.set_state(UserState.client_text)
                 # just text
                 elif text and not buttons and not media:
-                    await message.edit_text(
+                    await message.delete()
+                    await message.answer(
                         data['text'],
                         reply_markup=edit_sets(
                             message.from_user.id,
@@ -384,7 +386,7 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     )
                     await state.set_state(UserState.client_text)
             else:
-                await message.answer("📛 <b>Минимальное значение - 500, максимальное 20.000</b>")
+                await message.answer("📛 <b>Минимальное значение - 500, максимальное - 20.000</b>")
 
         except ValueError:
             await message.answer(
