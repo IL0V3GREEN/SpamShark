@@ -927,7 +927,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"-----------------------------------\n"
                             f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
-                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"├ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n"
+                            f"└ <b>Прогресс:</b> <code>0</code>%\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
 
                 )
@@ -956,7 +957,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"-----------------------------------\n"
                             f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
-                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"├ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n"
+                            f"└ <b>Прогресс:</b> <code>0</code>%\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await call.message.edit_media(media)
@@ -979,7 +981,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     f"-----------------------------------\n"
                     f"<b>#{number}\n</b>"
                     f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
-                    f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                    f"├ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n"
+                    f"└ <b>Прогресс:</b> <code>0</code>%\n\n"
                     f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n",
                     reply_markup=client_finish_buttons(data['inline'])
                 )
@@ -1000,7 +1003,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     media=f"{data['media']}",
                     caption=f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
-                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"├ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n"
+                            f"└ <b>Прогресс:</b> <code>0</code>%\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await call.message.edit_media(media, reply_markup=client_finish_buttons(data['inline']))
@@ -1021,7 +1025,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     media=f"{data['media']}",
                     caption=f"<b>#{number}\n</b>"
                             f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
-                            f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                            f"├ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n"
+                            f"└ <b>Прогресс:</b> <code>0</code>%\n\n"
                             f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await call.message.edit_media(media)
@@ -1042,7 +1047,8 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     f"-----------------------------------\n"
                     f"<b>#{number}\n</b>"
                     f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
-                    f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
+                    f"├ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n"
+                    f"└ <b>Прогресс:</b> <code>0</code>%\n\n"
                     f"<i>♻️ Бот отправит тебе сообщение, когда закончится рассылка</i>\n"
                 )
                 await bot.send_message(
