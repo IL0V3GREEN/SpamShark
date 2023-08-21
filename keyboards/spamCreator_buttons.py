@@ -14,7 +14,7 @@ class EditFactory(CallbackData, prefix="editfab"):
 
 
 def edit_sets(
-        user_id: int, text: bool, media: bool, url: bool, theme: str, count: int, url_buttons: list or None = None
+        user_id: int, text: bool, media: bool, url: bool, theme: str, count: int, url_buttons: list | None = None
 ):
     builder = InlineKeyboardBuilder()
     if url is True:
@@ -86,18 +86,13 @@ def client_finish_buttons(url: list):
     return builder.as_markup()
 
 
-def admin_spam_start():
+def admin_spam_end(url: list | None = None):
     builder = InlineKeyboardBuilder()
-    builder.button(
-        text="Приступить спамить",
-        callback_data=f"startspam"
-    )
-    builder.adjust(1)
-    return builder.as_markup()
-
-
-def admin_spam_end():
-    builder = InlineKeyboardBuilder()
+    for i in url:
+        builder.button(
+            text=f"{(i.split('-')[0])[:-1]}",
+            url=f"{(i.split('-')[1])[1:]}"
+        )
     builder.button(
         text="Спам-рассылка завершена",
         callback_data=f"endSpam"

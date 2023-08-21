@@ -946,7 +946,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_end()
+                    reply_markup=admin_spam_end(data['inline'])
                 )
 
             elif callback_data.text and callback_data.media and not callback_data.url:
@@ -994,7 +994,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                     f"├ <b>Аудитория:</b> <code>{data['spam_theme']}</code>\n"
                     f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                     f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_end()
+                    reply_markup=admin_spam_end(data['inline'])
                 )
 
             elif callback_data.media and callback_data.url and not callback_data.text:
@@ -1016,7 +1016,7 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
                             f"└ <b>Кол-во сообщений:</b> <code>{data['message_count']}</code>\n\n"
                             f"file_id: {data['media']}\n"
                             f"message_id: {call.message.message_id}\n",
-                    reply_markup=admin_spam_end()
+                    reply_markup=admin_spam_end(data['inline'])
                 )
 
             elif callback_data.media and not callback_data.text and not callback_data.url:
