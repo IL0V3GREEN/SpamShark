@@ -154,7 +154,7 @@ async def getting_amount(message: Message, state: FSMContext, bot: Bot):
     if message.text != '/faq':
         try:
             amount = int(message.text)
-            if amount >= 100:
+            if amount >= 1000:
                 await bot.delete_message(message.chat.id, message.message_id - 1)
                 await state.update_data(amount=amount)
                 await message.answer(
@@ -165,7 +165,7 @@ async def getting_amount(message: Message, state: FSMContext, bot: Bot):
                     reply_markup=payment_methods()
                 )
             else:
-                await message.answer("📛 Минимальное пополнение - 100₽")
+                await message.answer("📛 <b>Минимальное пополнение -</b> <code>1000</code><b>₽</b>\n\n")
         except ValueError:
             await message.answer("👨🏻‍🏫 Введи целое число")
     else:

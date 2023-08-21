@@ -146,10 +146,6 @@ def choose_theme():
 def choose_count():
     builder = InlineKeyboardBuilder()
     builder.button(
-        text="100",
-        callback_data="clientCount_100"
-    )
-    builder.button(
         text="500",
         callback_data="clientCount_500"
     )
@@ -176,6 +172,10 @@ def choose_count():
     builder.button(
         text="10000",
         callback_data="clientCount_10000"
+    )
+    builder.button(
+        text="20000",
+        callback_data="clientCount_20000"
     )
     builder.button(
         text="✏️ Свое количество",
