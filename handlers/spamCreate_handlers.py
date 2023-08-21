@@ -318,7 +318,6 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await state.set_state(UserState.client_text)
                 # text & buttons
                 elif text and buttons and not media:
-                    await message.delete()
                     await message.answer(
                         data['text'],
                         reply_markup=edit_sets(
@@ -365,7 +364,6 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
                     await state.set_state(UserState.client_text)
                 # just text
                 elif text and not buttons and not media:
-                    await message.delete()
                     await message.answer(
                         data['text'],
                         reply_markup=edit_sets(
