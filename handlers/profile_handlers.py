@@ -58,7 +58,7 @@ async def balance_callback(call: CallbackQuery, state: FSMContext, bot: Bot):
     if action == "deposit":
         await call.message.answer(
             "🧐 Cколько <b>₽</b> пополняем?\n\n"
-            "<i>минимальное пополнение -</i> <code>100</code><i>₽</i>"
+            "<i>минимальное пополнение -</i> <code>1000</code><i>₽</i>"
         )
         await state.set_state(BalanceState.amount)
 
