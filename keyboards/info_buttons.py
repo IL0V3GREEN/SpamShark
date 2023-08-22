@@ -25,7 +25,7 @@ def main_info_buttons():
 
 def back_from_stats(username):
     builder = InlineKeyboardBuilder()
-    if username != 'Скрыто':
+    if username != 'Скрыт':
         builder.button(
             text="🙈 Скрыть себя",
             callback_data="topmake_invisible"
