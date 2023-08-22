@@ -206,12 +206,17 @@ class Database:
         for i in all_users:
             users.append({'username': i['username'], 'rating': Database().count_rating(i['user_id'])})
         result = sorted(users, key=itemgetter('rating'), reverse=True)
-        if len(result) >= 10:
-            for count in range(0, 10):
-                string += f"{count + 1}. <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
-        else:
-            for count in range(len(result)):
-                string += f"{count + 1}. <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
+        for count in range(0, 10):
+            if count == 0:
+                place = "🥇"
+            elif count == 1:
+                place = "🥈"
+            elif count == 2:
+                place = "🥉"
+            else:
+                place = count + 1
+                
+            string += f"{place}. <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
 
         return string
 
