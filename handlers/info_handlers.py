@@ -57,7 +57,7 @@ async def info_handling(call: CallbackQuery):
 async def username_visibility(call: CallbackQuery):
     action = call.data.split("_")[1]
     if action == "invisible":
-        db.update_string(call.from_user.id, {'username': 'Скрыто'})
+        db.update_string(call.from_user.id, {'username': 'Скрыт'})
         await call.answer("🙈 Твой ник скрыт из ТОПа")
         await call.message.edit_text(
             "⚔️ <b>ТОП-10 по рейтингу</b>\n\n"
