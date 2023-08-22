@@ -202,19 +202,34 @@ class Database:
 
     def top_rating_list(self):
         all_users = list(self.collection.find())
+        top_users = []
         string = ""
-        result = sorted(all_users, key=itemgetter('rating'), reverse=True)
-        for count in range(0, 10):
-            if count == 0:
-                place = "🥇"
-            elif count == 1:
-                place = "🥈"
-            elif count == 2:
-                place = "🥉"
-            else:
-                place = f"{count + 1}."
-
-            string += f"{place} <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
+        for user in all_users:
+            if user['rating'] > 0:
+                top_users.append(user)
+        result = sorted(top_users, key=itemgetter('rating'), reverse=True)
+        if len(result) >= 10:
+            for count in range(0, 10):
+                if count == 0:
+                    place = "🥇"
+                elif count == 1:
+                    place = "🥈"
+                elif count == 2:
+                    place = "🥉"
+                else:
+                    place = f"{count + 1}."
+                string += f"{place} <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
+        else:
+            for count in range(len(result)):
+                if count == 0:
+                    place = "🥇"
+                elif count == 1:
+                    place = "🥈"
+                elif count == 2:
+                    place = "🥉"
+                else:
+                    place = f"{count + 1}."
+                string += f"{place} <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
 
         return string
 
