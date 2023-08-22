@@ -28,6 +28,7 @@ class Database:
                 'user_id': user_id,
                 'username': username,
                 'balance': 0,
+                'rating': Database().count_rating(user_id),
                 'date': {
                     'year': datetime.now(self.tz).strftime("%Y"),
                     'month': datetime.now(self.tz).strftime("%m"),
@@ -201,11 +202,8 @@ class Database:
 
     def top_rating_list(self):
         all_users = list(self.collection.find())
-        users = []
         string = ""
-        for i in all_users:
-            users.append({'username': i['username'], 'rating': Database().count_rating(i['user_id'])})
-        result = sorted(users, key=itemgetter('rating'), reverse=True)
+        result = sorted(all_users, key=itemgetter('rating'), reverse=True)
         for count in range(0, 10):
             if count == 0:
                 place = "🥇"

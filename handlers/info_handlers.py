@@ -24,7 +24,7 @@ async def info_handling(call: CallbackQuery):
     if thing == "rating":
         await call.message.edit_text(
             f"💥 <b>Рейтинговая система</b>\n\n"
-            f"<b>Рейтинг:</b> <code>{db.count_rating(call.from_user.id)}</code> 🏆\n\n"
+            f"<b>Рейтинг:</b> <code>{db.user_info(call.from_user.id)}</code> 🏆\n\n"
             f"📌 Что дают кубки:\n"
             f"🟩 Спамер (от <code>100</code> 🏆):\n"
             f"└ +<code>3</code>% от пополнений рефералов\n\n"
@@ -105,7 +105,7 @@ async def rating_handlers(call: CallbackQuery):
 async def increase_buttons_back(call: CallbackQuery):
     await call.message.edit_text(
         f"💥 <b>Рейтинговая система</b>\n\n"
-        f"<b>Рейтинг:</b> <code>{db.count_rating(call.from_user.id)}</code> 🏆\n\n"
+        f"<b>Рейтинг:</b> <code>{db.user_info(call.from_user.id)}</code> 🏆\n\n"
         f"📌 Что дают кубки:\n"
         f"🟩 Спамер (от <code>100</code> 🏆):\n"
         f"└ +<code>3</code>% от пополнений рефералов\n\n"

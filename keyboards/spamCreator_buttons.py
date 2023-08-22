@@ -60,7 +60,7 @@ def edit_sets(
         callback_data="spambuild_theme"
     )
     builder.button(
-        text=f"Кол-во сообщений: {count} ({get_price(db.count_rating(user_id)) * count}₽)",
+        text=f"Кол-во сообщений: {count} ({get_price(db.user_info(user_id)['rating']) * count}₽)",
         callback_data="spambuild_count"
     )
     builder.button(

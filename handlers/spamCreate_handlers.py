@@ -143,7 +143,7 @@ async def getting_type(call: CallbackQuery, state: FSMContext):
     else:
         await call.message.edit_text(
             "🔢 Выбери количество сообщений.\n\n"
-            f"<i>1 сообщение = <code>{get_price(db.count_rating(call.from_user.id))}</code>₽</i>",
+            f"<i>1 сообщение = <code>{get_price(db.user_info(call.from_user.id)['rating'])}</code>₽</i>",
             reply_markup=choose_count()
         )
         await state.set_state(UserState.message_count)
@@ -264,7 +264,7 @@ async def getting_count(call: CallbackQuery, state: FSMContext):
     else:
         await call.message.edit_text(
             "📝 Введи свое количество: \n\n"
-            f"<i>1 сообщение = <code>{get_price(db.count_rating(call.from_user.id))}</code>₽</i>"
+            f"<i>1 сообщение = <code>{get_price(db.user_info(call.from_user.id)['rating'])}</code>₽</i>"
         )
 
 
@@ -409,11 +409,11 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
             f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
             f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(message.from_user.id)}</code>\n\n"
             f"💥 <b>Рейтинг</b>\n"
-            f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.count_rating(message.from_user.id))}</code>\n"
-            f"└ 🏆 <b>Кубков:</b> <code>{db.count_rating(message.from_user.id)}</code>\n\n"
+            f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
+            f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
             f"🤝 <b>Реферальная система</b>\n"
             f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
-            f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.count_rating(message.from_user.id))}</code>%",
+            f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>%",
             reply_markup=deposit_menu(message.from_user.id)
         )
         await state.clear()
@@ -596,11 +596,11 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
             f"├ <b>Всего:</b> <code>{len(list(db.orders.find({'user_id': message.from_user.id})))}</code>\n"
             f"└ 📬 <b>Сообщений отправлено:</b> <code>{db.count_all_messages(message.from_user.id)}</code>\n\n"
             f"💥 <b>Рейтинг</b>\n"
-            f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.count_rating(message.from_user.id))}</code>\n"
-            f"└ 🏆 <b>Кубков:</b> <code>{db.count_rating(message.from_user.id)}</code>\n\n"
+            f"├ 🃏 <b>Статус:</b> <code>{get_rate_status(db.user_info(message.from_user.id)['rating'])}</code>\n"
+            f"└ 🏆 <b>Кубков:</b> <code>{db.user_info(message.from_user.id)['rating']}</code>\n\n"
             f"🤝 <b>Реферальная система</b>\n"
             f"├ 👥 <b>Рефералов:</b> <code>{db.count_referrals(message.from_user.id)}</code>\n"
-            f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.count_rating(message.from_user.id))}</code>%",
+            f"└ 💲 <b>Процент:</b> <code>{get_ref_percent(db.user_info(message.from_user.id)['rating'])}</code>%",
             reply_markup=deposit_menu(message.from_user.id)
         )
         await state.clear()
@@ -894,7 +894,7 @@ async def editing_buttons(call: CallbackQuery, state: FSMContext):
         await call.message.delete()
         await call.message.answer(
             "🔢 Выбери количество сообщений.\n\n"
-            f"<i>1 сообщение = <code>{get_price(db.count_rating(call.from_user.id))}</code>₽</i>",
+            f"<i>1 сообщение = <code>{get_price(db.user_info(call.from_user.id)['rating'])}</code>₽</i>",
             reply_markup=choose_count()
         )
         await state.set_state(UserState.message_count)
@@ -905,18 +905,21 @@ async def setup_complete(call: CallbackQuery, state: FSMContext, callback_data: 
     data = await state.get_data()
 
     if db.get_shop_status() == "enabled":
-        if db.user_info(call.from_user.id)['balance'] >= (data['message_count'] * get_price(db.count_rating(call.from_user.id))):
+        if db.user_info(call.from_user.id)['balance'] >= (data['message_count'] * get_price(db.user_info(call.from_user.id)['rating'])):
             number = random.randint(0, 9999)
             db.create_spam_order(
                 number,
                 call.from_user.id,
                 data['message_count'],
                 data['spam_theme'],
-                data['message_count'] * get_price(db.count_rating(call.from_user.id))
+                data['message_count'] * get_price(db.user_info(call.from_user.id)['rating'])
             )
             db.update_string(
                 call.from_user.id,
-                {'balance': (db.user_info(call.from_user.id)['balance'] - (data['message_count'] * get_price(db.count_rating(call.from_user.id))))}
+                {
+                    'balance': (db.user_info(call.from_user.id)['balance'] - (data['message_count'] * get_price(db.user_info(call.from_user.id)['rating']))),
+                    'rating': db.count_rating(call.from_user.id)
+                }
             )
 
             if callback_data.text and callback_data.media and callback_data.url:

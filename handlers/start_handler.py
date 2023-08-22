@@ -25,6 +25,7 @@ async def start_handle(message: Message, state: FSMContext):
             if ref_id != message.from_user.id:
                 db.add_user(message.from_user.id, username)
                 db.update_string(message.from_user.id, {'ref_id': ref_id})
+                db.update_string(ref_id, {'rating': db.count_rating(ref_id)})
 
             else:
                 await message.answer("<b>📛 Нельзя зарегистрироваться по своей реферальной ссылке!</b>")
