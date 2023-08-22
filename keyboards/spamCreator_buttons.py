@@ -97,6 +97,7 @@ def admin_spam_end(url: list | None = None):
         text="Спам-рассылка завершена",
         callback_data=f"endSpam"
     )
+    builder.adjust(1)
     return builder.as_markup()
 
 
@@ -141,8 +142,8 @@ def choose_theme():
 def choose_count():
     builder = InlineKeyboardBuilder()
     builder.button(
-        text="500",
-        callback_data="clientCount_500"
+        text="250",
+        callback_data="clientCount_250"
     )
     builder.button(
         text="1000",
