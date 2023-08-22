@@ -214,9 +214,9 @@ class Database:
             elif count == 2:
                 place = "🥉"
             else:
-                place = count + 1
-                
-            string += f"{place}. <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
+                place = f"{count + 1}."
+
+            string += f"{place} <b>{result[count]['username']}</b> - <code>{result[count]['rating']}</code>\n"
 
         return string
 
