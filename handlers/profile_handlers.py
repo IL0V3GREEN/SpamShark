@@ -250,7 +250,7 @@ async def approving_cryptopay(call: CallbackQuery):
 
     elif invoice.status == "paid":
         await call.message.delete()
-        await call.message.answer(f"<b>✅ Счет успешно пополнен на</b> <code>{amount}₽</code>")
+        await call.message.answer(f"<b>✅ Счет успешно пополнен на</b> <code>{amount}</code>₽")
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
 
         try:
@@ -296,7 +296,7 @@ async def approving_transaction(call: CallbackQuery, bot: Bot):
     if action == "accept":
         await bot.send_message(
             user_id,
-            f"✅ <b>Счет успешно пополнен на</b> <code>{amount}₽</code>"
+            f"✅ <b>Счет успешно пополнен на</b> <code>{amount}</code>₽"
         )
         db.update_string(user_id, {'balance': (db.user_info(user_id)['balance'] + amount)})
         await call.message.edit_text(
