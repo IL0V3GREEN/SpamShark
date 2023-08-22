@@ -31,16 +31,16 @@ def get_ref_percent(x: int) -> int:
 
 def get_price(x: int) -> float:
     if x < 100:
-        return 2
+        return 3
 
     elif 100 <= x < 500:
-        return 2
+        return 3
 
     elif 500 <= x < 1000:
-        return 1.75
+        return 2.5
 
     elif x >= 1000:
-        return 1.5
+        return 2
 
 
 def get_reqs(user_id):
