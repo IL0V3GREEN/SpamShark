@@ -17,16 +17,16 @@ def get_rate_status(x: int) -> str:
 
 def get_ref_percent(x: int) -> int:
     if x < 100:
-        return 3
-
-    elif 100 <= x < 500:
         return 6
 
-    elif 500 <= x < 1000:
+    elif 100 <= x < 500:
         return 9
 
-    elif x >= 1000:
+    elif 500 <= x < 1000:
         return 12
+
+    elif x >= 1000:
+        return 15
 
 
 def get_price(x: int) -> float:
