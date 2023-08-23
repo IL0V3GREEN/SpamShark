@@ -150,28 +150,28 @@ def choose_count():
         callback_data="clientCount_1000"
     )
     builder.button(
-        text="2000",
-        callback_data="clientCount_2000"
-    )
-    builder.button(
-        text="4000",
-        callback_data="clientCount_4000"
-    )
-    builder.button(
-        text="6000",
-        callback_data="clientCount_6000"
-    )
-    builder.button(
-        text="8000",
-        callback_data="clientCount_8000"
+        text="5000",
+        callback_data="clientCount_5000"
     )
     builder.button(
         text="10000",
         callback_data="clientCount_10000"
     )
     builder.button(
-        text="20000",
-        callback_data="clientCount_20000"
+        text="15000",
+        callback_data="clientCount_15000"
+    )
+    builder.button(
+        text="25000",
+        callback_data="clientCount_25000"
+    )
+    builder.button(
+        text="35000",
+        callback_data="clientCount_35000"
+    )
+    builder.button(
+        text="50000",
+        callback_data="clientCount_50000"
     )
     builder.button(
         text="✏️ Свое количество",
