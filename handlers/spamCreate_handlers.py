@@ -396,7 +396,7 @@ async def getting_self_count(message: Message, state: FSMContext, bot: Bot):
         await message.answer(
             f"🥷🏻 <b>Твой профиль!</b>\n"
             f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
-            f"├ 📆 <b>Дата входа:</b> "
+            f"├ 📆 <b>Дата вступления:</b> "
             f"<code>{db.user_info(message.from_user.id)['date']['day']}."
             f"{db.user_info(message.from_user.id)['date']['month']}."
             f"{db.user_info(message.from_user.id)['date']['year']}</code>\n"
@@ -583,7 +583,7 @@ async def getting_text(message: Message, state: FSMContext, bot: Bot):
         await message.answer(
             f"🥷🏻 <b>Твой профиль!</b>\n"
             f"├ 🆔<b>:</b> <code>{message.from_user.id}</code>\n"
-            f"├ 📆 <b>Дата входа:</b> "
+            f"├ 📆 <b>Дата вступления:</b> "
             f"<code>{db.user_info(message.from_user.id)['date']['day']}."
             f"{db.user_info(message.from_user.id)['date']['month']}."
             f"{db.user_info(message.from_user.id)['date']['year']}</code>\n"
