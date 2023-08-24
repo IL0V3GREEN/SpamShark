@@ -200,7 +200,8 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
             data['amount'],
             username='Mаximus',
             comment=comment,
-            redirect_url="https://t.me/spamsharkbot",
+            redirect_url=f"https://t.me/spamsharkbot?start=lolzpay_{call.from_user.id}_{data['amount']}_{comment}_"
+                         f"{call.message.message_id}",
             currency='rub',
         )
         await call.message.edit_text(
@@ -209,7 +210,7 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
             f'└ <b>Комментарий:</b> <code>{comment}</code>\n\n'
             f'⚠️ <i><b>Обратите внимание, что сумма перевода и комментарий должны полностью '
             f'соответствовать заданной сумме и комментарию, иначе оплата не будет засчитана.</b></i>',
-            reply_markup=lolz_buttons(link, float(data['amount']), comment)
+            reply_markup=lolz_buttons(link, float(data['amount']))
         )
 
     elif action == "crypto":
@@ -222,13 +223,6 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
             "Выбери криптовалюуту:",
             reply_markup=cryptopay_panel(currency_list)
         )
-
-
-@router.callback_query(F.data.startswith("ihavetransfered"))
-async def lolz_pay_approve(call: CallbackQuery):
-    comment = call.data.split("_")[1]
-    payment = lolz.market.payments.history(comment=comment,)
-    print(payment)
 
 
 @router.callback_query(F.data.startswith("paycryptobot"))

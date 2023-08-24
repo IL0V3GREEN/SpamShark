@@ -1,6 +1,6 @@
 import asyncio
-
-from aiogram import Router
+from LolzteamApi import LolzteamApi
+from aiogram import Router, Bot
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
@@ -10,10 +10,11 @@ from mongo import Database
 
 db = Database()
 router = Router()
+lolz = LolzteamApi('01c295d581ca25fd24567b215738b5535b28f24d')
 
 
 @router.message(Command(commands="start"))
-async def start_handle(message: Message, state: FSMContext):
+async def start_handle(message: Message, state: FSMContext, bot: Bot):
     if message.from_user.username is not None:
         username = f"@{message.from_user.username}"
     else:
@@ -37,6 +38,26 @@ async def start_handle(message: Message, state: FSMContext):
             "🌚 <b>Выберите целевую аудиторию.</b>",
             reply_markup=choose_theme()
         )
+
+    elif message.text[7:].startswith("lolzpay"):
+        user_id = int(message.text[7:].split("_")[1])
+        amount = int(message.text[7:].split("_")[2])
+        comment = message.text[7:].split("_")[3]
+        message_id = int(message.text[7:].split("_")[4])
+        payment = lolz.market.payments.history(comment=comment)
+        try:
+            status = payment['payments']
+            print(status)
+            await bot.delete_message(message.chat.id, message_id)
+            await message.answer(
+                '💚 <b>Оплата Lolzteam</b>\n\n'
+                f'✅ <code>{amount}</code><b>₽ переведены на твой счет.</b>'
+            )
+            db.update_string(user_id, {'balance': db.user_info(user_id)['balance'] + amount})
+            await state.clear()
+        except KeyError:
+            await message.answer("📛 <b>Счет не оплачен</b>")
+
     else:
         await message.answer_sticker("CAACAgIAAxkBAAEKCRxk2__X8I1sEWoCtF30MhfGaPPsVgACJxwAAtqDAAFKAAG1a2gCHgiTMAQ")
         await asyncio.sleep(1)

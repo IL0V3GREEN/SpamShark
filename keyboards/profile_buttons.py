@@ -57,10 +57,10 @@ def payment_methods():
         text="🇷🇺 Cards RU",
         callback_data="method_cards"
     )
-    # builder.button(
-    #     text="Lolzteam",
-    #     callback_data="method_lolz"
-    # )
+    builder.button(
+        text="Lolzteam",
+        callback_data="method_lolz"
+    )
     builder.button(
         text="Crypto",
         callback_data="method_crypto"
@@ -69,15 +69,11 @@ def payment_methods():
     return builder.as_markup()
 
 
-def lolz_buttons(url: str, amount: float, comment: int):
+def lolz_buttons(url: str, amount: float):
     builder = InlineKeyboardBuilder()
     builder.button(
         text=f"Оплатить {amount}₽",
         url=url
-    )
-    builder.button(
-        text="✅ Я оплатил",
-        callback_data=f"ihavetransfered_{comment}"
     )
     builder.adjust(1)
     return builder.as_markup()
