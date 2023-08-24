@@ -72,7 +72,7 @@ def payment_methods():
 def lolz_buttons(url: str, amount: float, comment: int):
     builder = InlineKeyboardBuilder()
     builder.button(
-        text=f"Оплатить {amount}",
+        text=f"Оплатить {amount}₽",
         url=url
     )
     builder.button(

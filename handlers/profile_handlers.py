@@ -198,6 +198,7 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
         comment = random.randint(0, 999999)
         link = lolz.market.payments.generate_link(
             data['amount'],
+            username='Mаximus',
             comment=comment,
             redirect_url="https://t.me/spamsharkbot",
             currency='rub',
@@ -206,8 +207,8 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
             '💚 <b>Оплата Lolzteam</b>\n'
             f'├ <b>Сумма:</b> <code>{data["amount"]}</code>₽\n'
             f'└ <b>Комментарий:</b> <code>{comment}</code>\n\n'
-            f'⚠️ <i>Обратите внимание, что сумма перевода и комментарий должны полностью '
-            f'соответствовать заданной сумме и комментарию, иначе оплата не будет засчитана.</i>',
+            f'⚠️ <i><b>Обратите внимание, что сумма перевода и комментарий должны полностью '
+            f'соответствовать заданной сумме и комментарию, иначе оплата не будет засчитана.</b></i>',
             reply_markup=lolz_buttons(link, float(data['amount']), comment)
         )
 
@@ -226,7 +227,7 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("ihavetransfered"))
 async def lolz_pay_approve(call: CallbackQuery):
     comment = call.data.split("_")[1]
-    payment = lolz.market.payments.history(comment=comment)
+    payment = lolz.market.payments.history(comment=comment,)
     print(payment)
 
 
