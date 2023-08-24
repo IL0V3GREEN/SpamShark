@@ -54,11 +54,11 @@ def proxy_buttons():
 def tg_sets():
     builder = InlineKeyboardBuilder()
     builder.button(
-        text="Добавить аккаунт",
+        text="🆕 Добавить аккаунт",
         callback_data="tgsets_add"
     )
     builder.button(
-        text="Проверить валидность аккаунтов",
+        text="🧩 Валидность аккаунтов",
         callback_data="tgsets_check"
     )
     builder.button(
