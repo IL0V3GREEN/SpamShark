@@ -28,7 +28,7 @@ class Sessions:
                             else:
                                 pass
                         else:
-                            files.append(session['session_name'])
+                            print("fail")
                     except ConnectionError:
                         available += 1
                 except AttributeError:
@@ -60,7 +60,7 @@ class Sessions:
                             else:
                                 pass
                         else:
-                            files.append(session['session_name'])
+                            print("fail")
                     except ConnectionError:
                         available += 1
                 except AttributeError:
