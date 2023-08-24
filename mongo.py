@@ -261,8 +261,11 @@ class Database:
             }
         )
 
-    def find_session(self, name: str):
-        return self.session.find_one({'session_name': name})
+    def find_session(self, name: str, key: str):
+        try:
+            return self.session.find_one({'session_name': name})[key]
+        except TypeError:
+            pass
 
     def delete_session(self, name: str):
         self.session.delete_one({'session_name': name})
