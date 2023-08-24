@@ -10,6 +10,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from mongo import Database
 from sessions.spam_funcs import Sessions
+from pyrogram import Client
 
 
 db = Database()
@@ -23,6 +24,7 @@ class SendingMessage(StatesGroup):
 class TgSettings(StatesGroup):
     saving_session = State()
     getting_api = State()
+    get_code = State()
     new_proxy = State()
 
 
@@ -150,7 +152,7 @@ async def getting_session(message: Message, bot: Bot, state: FSMContext):
     await state.update_data(saving_session=name)
     await state.set_state(TgSettings.getting_api)
     await message.answer(
-        "Отправь мне api_id & api_hash через * без пробелов:"
+        "Отправь мне api_id & api_hash & phone через * без пробелов:"
     )
 
 
@@ -160,21 +162,41 @@ async def getting_apis(message: Message, bot: Bot, state: FSMContext):
     try:
         api_id = int(message.text.split("*")[0])
         api_hash = message.text.split("*")[1]
+        phone = message.text.split("*")[2]
+        await state.update_data(getting_api=f'{api_id}*{api_hash}')
         data = await state.get_data()
-        db.add_session(data['saving_session'], api_id, api_hash)
-        await message.answer(
-            "📱 <b>Менеджер аккаунтов</b>\n\n"
-            "<b>Телеграм акки</b>\n"
-            f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
-            f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
-            f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>\n\n"
-            "Аккаунт успешно добавлен",
-            reply_markup=tg_sets()
+        await state.set_state(TgSettings.get_code)
+        app = Client(
+            str(data['saving_session']).split('.')[0],
+            api_id,
+            api_hash,
+            proxy=db.current_proxy()
         )
-        await state.clear()
+        phone = await app.send_code(phone)
+        await state.update_data(get_code=phone.phone_code_hash)
+        await message.answer("✉️ Отправь код от Telegram")
 
     except TypeError:
-        await message.answer("📛 Отправь корректный api_id*api_hash")
+        await message.answer("📛 Отправь корректный api_id*api_hash*phone")
+
+
+@router.message(TgSettings.get_code, F.text)
+async def auth_profile(message: Message, state: FSMContext, bot: Bot):
+    await bot.delete_message(message.chat.id, message.message_id - 1)
+    data = await state.get_data()
+    app = Client(
+        str(data['saving_session']).split('.')[0],
+        int(str(data['getting_api']).split("*")[0]),
+        str(data['getting_api']).split("*")[1]
+    )
+    await app.sign_in(str(data['getting_api']).split("*")[3], data['get_code'], message.text)
+    await message.answer(
+        "📱 <b>Менеджер аккаунтов</b>\n\n"
+        "<b>Телеграм акки</b>\n"
+        f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
+        f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
+        f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>"
+    )
 
 
 @router.callback_query(F.data == "toAccManager")
