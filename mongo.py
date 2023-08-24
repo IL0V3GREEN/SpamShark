@@ -13,6 +13,7 @@ class Database:
         self.collection = self.db.get_collection('users')
         self.orders = self.db.get_collection('orders')
         self.functions = self.db.get_collection('functions')
+        self.session = self.db.get_collection('sessions')
         self.tz = pytz.timezone("Europe/Moscow")
 
     def user_exists(self, user_id):
@@ -250,3 +251,37 @@ class Database:
             self.functions.update_one({"shop_status": "shop_status"}, {"$set": {'status': 'disabled'}})
         elif Database().get_shop_status() == "disabled":
             self.functions.update_one({"shop_status": "shop_status"}, {"$set": {'status': 'enabled'}})
+
+    def add_session(self, name: str, api_id: int, api_hash: str):
+        self.session.insert_one(
+            {
+                'session_name': name,
+                'api_id': api_id,
+                'api_hash': api_hash
+            }
+        )
+
+    def find_session(self, name: str):
+        return self.session.find_one({'session_name': name})
+
+    def delete_session(self, name: str):
+        self.session.delete_one({'session_name': name})
+
+    def current_proxy(self) -> dict:
+        return self.functions.find_one({'proxy': 'proxy'})['current']
+
+    def update_proxy(self, scheme: str, hostname: str, port: int, username: str, password: str):
+        self.functions.update_one(
+            {'proxy': 'proxy'},
+            {
+                "$set": {
+                    'current': {
+                        'scheme': scheme,
+                        'hostname': hostname,
+                        'port': port,
+                        'username': username,
+                        'password': password
+                    }
+                }
+            }
+        )
