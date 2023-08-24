@@ -57,10 +57,10 @@ def payment_methods():
         text="🇷🇺 Cards RU",
         callback_data="method_cards"
     )
-    builder.button(
-        text="Lolzteam",
-        callback_data="method_lolz"
-    )
+    # builder.button(
+    #     text="Lolzteam",
+    #     callback_data="method_lolz"
+    # )
     builder.button(
         text="Crypto",
         callback_data="method_crypto"
