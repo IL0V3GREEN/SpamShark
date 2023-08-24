@@ -25,10 +25,10 @@ def main_menu(status):
         text="✉️ Создать рассылку",
         callback_data="admpanel_message"
     )
-    builder.button(
-        text="📱 Менеджер аккаунтов",
-        callback_data="admpanel_accounts"
-    )
+    # builder.button(
+    #     text="📱 Менеджер аккаунтов",
+    #     callback_data="admpanel_accounts"
+    # )
     builder.button(
         text="🌐 Менеджер прокси",
         callback_data="admpanel_proxy"
