@@ -28,11 +28,11 @@ class Sessions:
                             else:
                                 pass
                         else:
-                            files.append(session.name)
+                            files.append(session['session_name'])
                     except ConnectionError:
                         available += 1
                 except AttributeError:
-                    files.append(session.name)
+                    files.append(session['session_name'])
             for file in files:
                 db.delete_session(file)
 
@@ -60,11 +60,11 @@ class Sessions:
                             else:
                                 pass
                         else:
-                            files.append(session.name)
+                            files.append(session['session_name'])
                     except ConnectionError:
                         available += 1
                 except AttributeError:
-                    files.append(session.name)
+                    files.append(session['session_name'])
             for file in files:
                 db.delete_session(file)
 
