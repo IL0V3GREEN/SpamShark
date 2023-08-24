@@ -9,7 +9,6 @@ from keyboards.adm_buttons import main_menu, adm_back_from_stats, tg_sets, back_
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from mongo import Database
-from sessions.spam_funcs import Sessions
 from pyrogram import Client
 
 
@@ -69,15 +68,15 @@ async def change_shop_status(call: CallbackQuery, state: FSMContext):
         await call.message.edit_text("Введи текст рассылки:", reply_markup=adm_back_from_stats())
         await state.set_state(SendingMessage.message_to_all)
 
-    elif action == "accounts":
-        await call.message.edit_text(
-            "📱 <b>Менеджер аккаунтов</b>\n\n"
-            "<b>Телеграм акки</b>\n"
-            f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
-            f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
-            f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>",
-            reply_markup=tg_sets()
-        )
+    # elif action == "accounts":
+    #     await call.message.edit_text(
+    #         "📱 <b>Менеджер аккаунтов</b>\n\n"
+    #         "<b>Телеграм акки</b>\n"
+    #         f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
+    #         f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
+    #         f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>",
+    #         reply_markup=tg_sets()
+    #     )
 
     elif action == 'proxy':
         await call.message.edit_text(
@@ -119,99 +118,98 @@ async def getting_proxy(message: Message, state: FSMContext, bot: Bot):
     await state.clear()
 
 
-@router.callback_query(F.data.startswith("tgsets"))
-async def sessions_manipulations(call: CallbackQuery, state: FSMContext):
-    action = call.data.split("_")[1]
-    if action == 'add':
-        await call.message.edit_text(
-            "Отправь мне файл с LOLZ (Pyrogram .session):",
-            reply_markup=back_to_account_manager()
-        )
-        await state.set_state(TgSettings.saving_session)
-
-    elif action == "check":
-        await call.message.edit_text(
-            "📱 <b>Менеджер аккаунтов</b>\n\n"
-            "<b>Телеграм акки</b>\n"
-            f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
-            f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
-            f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>\n\n"
-            "🕵🏻‍♀️ <i>Чекап аккаунтов завершен</i>",
-            reply_markup=tg_sets()
-        )
-
-
-@router.message(TgSettings.saving_session, F.document)
-async def getting_session(message: Message, bot: Bot, state: FSMContext):
-    await bot.delete_message(message.chat.id, message.message_id - 1)
-    file_id = message.document.file_id
-    file = await bot.get_file(file_id)
-    name = f"user_{random.randint(0, 9999)}.session"
-    path = os.path.join('sessions', name)
-    await bot.download_file(file.file_path, destination=path)
-    await state.update_data(saving_session=name)
-    await state.set_state(TgSettings.getting_api)
-    await message.answer(
-        "Отправь мне api_id & api_hash & phone через * без пробелов:"
-    )
-
-
-@router.message(TgSettings.getting_api, F.text)
-async def getting_apis(message: Message, bot: Bot, state: FSMContext):
-    await bot.delete_message(message.chat.id, message.message_id - 1)
-    try:
-        api_id = int(message.text.split("*")[0])
-        api_hash = message.text.split("*")[1]
-        phone = message.text.split("*")[2]
-        await state.update_data(getting_api=f'{api_id}*{api_hash}')
-        data = await state.get_data()
-        await state.set_state(TgSettings.get_code)
-        app = Client(
-            str(data['saving_session']).split('.')[0],
-            api_id,
-            api_hash,
-            proxy=db.current_proxy()
-        )
-        async with app:
-            phone = await app.send_code(phone)
-            await state.update_data(get_code=phone.phone_code_hash)
-            await message.answer("✉️ Отправь код от Telegram")
-
-    except TypeError:
-        await message.answer("📛 Отправь корректный api_id*api_hash*phone")
-
-
-@router.message(TgSettings.get_code, F.text)
-async def auth_profile(message: Message, state: FSMContext, bot: Bot):
-    await bot.delete_message(message.chat.id, message.message_id - 1)
-    data = await state.get_data()
-    app = Client(
-        str(data['saving_session']).split('.')[0],
-        int(str(data['getting_api']).split("*")[0]),
-        str(data['getting_api']).split("*")[1]
-    )
-    async with app:
-        await app.sign_in(str(data['getting_api']).split("*")[3], data['get_code'], message.text)
-        await message.answer(
-            "📱 <b>Менеджер аккаунтов</b>\n\n"
-            "<b>Телеграм акки</b>\n"
-            f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
-            f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
-            f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>"
-        )
-
-
-@router.callback_query(F.data == "toAccManager")
-async def back_to_acc_manager(call: CallbackQuery, state: FSMContext):
-    await call.message.edit_text(
-        "📱 <b>Менеджер аккаунтов</b>\n\n"
-        "<b>Телеграм акки</b>\n"
-        f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
-        f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
-        f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>",
-        reply_markup=tg_sets()
-    )
-    await state.clear()
+# @router.callback_query(F.data.startswith("tgsets"))
+# async def sessions_manipulations(call: CallbackQuery, state: FSMContext):
+#     action = call.data.split("_")[1]
+#     if action == 'add':
+#         await call.message.edit_text(
+#             "Отправь мне файл с LOLZ (Pyrogram .session):",
+#             reply_markup=back_to_account_manager()
+#         )
+#         await state.set_state(TgSettings.saving_session)
+#
+#     elif action == "check":
+#         await call.message.edit_text(
+#             "📱 <b>Менеджер аккаунтов</b>\n\n"
+#             "<b>Телеграм акки</b>\n"
+#             f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
+#             f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
+#             f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>\n\n"
+#             "🕵🏻‍♀️ <i>Чекап аккаунтов завершен</i>",
+#             reply_markup=tg_sets()
+#         )
+#
+#
+# @router.message(TgSettings.saving_session, F.document)
+# async def getting_session(message: Message, bot: Bot, state: FSMContext):
+#     await bot.delete_message(message.chat.id, message.message_id - 1)
+#     file_id = message.document.file_id
+#     file = await bot.get_file(file_id)
+#     name = f"user_{random.randint(0, 9999)}.session"
+#     path = os.path.join('sessions', name)
+#     await bot.download_file(file.file_path, destination=path)
+#     await state.update_data(saving_session=name)
+#     await state.set_state(TgSettings.getting_api)
+#     await message.answer(
+#         "Отправь мне api_id & api_hash & phone через * без пробелов:"
+#     )
+#
+#
+# @router.message(TgSettings.getting_api, F.text)
+# async def getting_apis(message: Message, bot: Bot, state: FSMContext):
+#     await bot.delete_message(message.chat.id, message.message_id - 1)
+#     try:
+#         api_id = int(message.text.split("*")[0])
+#         api_hash = message.text.split("*")[1]
+#         phone = message.text.split("*")[2]
+#         await state.update_data(getting_api=f'{api_id}*{api_hash}')
+#         data = await state.get_data()
+#         app = Client(
+#             str(data['saving_session']).split('.')[0],
+#             api_id,
+#             api_hash,
+#             proxy=db.current_proxy()
+#         )
+#         await app.connect()
+#         phone = await app.send_code(phone)
+#         await state.update_data(get_code=phone.phone_code_hash)
+#         await message.answer("✉️ Отправь код от Telegram")
+#         await state.set_state(TgSettings.get_code)
+#
+#     except TypeError:
+#         await message.answer("📛 Отправь корректный api_id*api_hash*phone")
+#
+#
+# @router.message(TgSettings.get_code, F.text)
+# async def auth_profile(message: Message, state: FSMContext, bot: Bot):
+#     await bot.delete_message(message.chat.id, message.message_id - 1)
+#     data = await state.get_data()
+#     app = Client(
+#         str(data['saving_session']).split('.')[0],
+#         int(str(data['getting_api']).split("*")[0]),
+#         str(data['getting_api']).split("*")[1]
+#     )
+#     await app.sign_in(str(data['getting_api']).split("*")[3], data['get_code'], message.text)
+#     await message.answer(
+#         "📱 <b>Менеджер аккаунтов</b>\n\n"
+#         "<b>Телеграм акки</b>\n"
+#         f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
+#         f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
+#         f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>"
+#     )
+#
+#
+# @router.callback_query(F.data == "toAccManager")
+# async def back_to_acc_manager(call: CallbackQuery, state: FSMContext):
+#     await call.message.edit_text(
+#         "📱 <b>Менеджер аккаунтов</b>\n\n"
+#         "<b>Телеграм акки</b>\n"
+#         f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
+#         f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
+#         f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>",
+#         reply_markup=tg_sets()
+#     )
+#     await state.clear()
 
 
 @router.callback_query(F.data == "admback")
