@@ -172,9 +172,10 @@ async def getting_apis(message: Message, bot: Bot, state: FSMContext):
             api_hash,
             proxy=db.current_proxy()
         )
-        phone = await app.send_code(phone)
-        await state.update_data(get_code=phone.phone_code_hash)
-        await message.answer("✉️ Отправь код от Telegram")
+        async with app:
+            phone = await app.send_code(phone)
+            await state.update_data(get_code=phone.phone_code_hash)
+            await message.answer("✉️ Отправь код от Telegram")
 
     except TypeError:
         await message.answer("📛 Отправь корректный api_id*api_hash*phone")
@@ -189,14 +190,15 @@ async def auth_profile(message: Message, state: FSMContext, bot: Bot):
         int(str(data['getting_api']).split("*")[0]),
         str(data['getting_api']).split("*")[1]
     )
-    await app.sign_in(str(data['getting_api']).split("*")[3], data['get_code'], message.text)
-    await message.answer(
-        "📱 <b>Менеджер аккаунтов</b>\n\n"
-        "<b>Телеграм акки</b>\n"
-        f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
-        f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
-        f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>"
-    )
+    async with app:
+        await app.sign_in(str(data['getting_api']).split("*")[3], data['get_code'], message.text)
+        await message.answer(
+            "📱 <b>Менеджер аккаунтов</b>\n\n"
+            "<b>Телеграм акки</b>\n"
+            f"├ <b>Валидных:</b> <code>{await Sessions.valid_sessions()}</code>\n"
+            f"├ <b>Спамблок:</b> <code>{await Sessions.spammers_sessions()}</code>\n"
+            f"└ <b>Всего:</b> <code>{await Sessions.valid_sessions() + await Sessions.spammers_sessions()}</code>"
+        )
 
 
 @router.callback_query(F.data == "toAccManager")
