@@ -19,24 +19,22 @@ class Sessions:
                     session['api_hash'],
                     proxy=db.current_proxy()
                 )
-                await app.start()
-                await app.stop()
-            #     try:
-            #         try:
-            #             if await app.connect():
-            #                 profile = await app.get_me()
-            #                 if not profile.is_restricted and not profile.is_deleted:
-            #                     available += 1
-            #                 else:
-            #                     pass
-            #             else:
-            #                 print("fail")
-            #         except ConnectionError:
-            #             available += 1
-            #     except AttributeError:
-            #         files.append(session['session_name'])
-            # for file in files:
-            #     db.delete_session(file)
+                try:
+                    try:
+                        if await app.connect():
+                            profile = await app.get_me()
+                            if not profile.is_restricted and not profile.is_deleted:
+                                available += 1
+                            else:
+                                pass
+                        else:
+                            files.append(session['session_name'])
+                    except ConnectionError:
+                        available += 1
+                except AttributeError:
+                    files.append(session['session_name'])
+            for file in files:
+                db.delete_session(file)
 
         return available
 
@@ -53,22 +51,20 @@ class Sessions:
                     session['api_hash'],
                     proxy=db.current_proxy()
                 )
-                await app.start()
-                await app.stop()
-                # try:
-                #     try:
-                #         if await app.connect():
-                #             profile = await app.get_me()
-                #             if profile.is_restricted and not profile.is_deleted:
-                #                 available += 1
-                #             else:
-                #                 pass
-                #         else:
-                #             print("fail")
-                #     except ConnectionError:
-                #         available += 1
-                # except AttributeError:
-                #     files.append(session['session_name'])
+                try:
+                    try:
+                        if await app.connect():
+                            profile = await app.get_me()
+                            if profile.is_restricted and not profile.is_deleted:
+                                available += 1
+                            else:
+                                pass
+                        else:
+                            files.append(session['session_name'])
+                    except ConnectionError:
+                        available += 1
+                except AttributeError:
+                    files.append(session['session_name'])
             for file in files:
                 db.delete_session(file)
 
