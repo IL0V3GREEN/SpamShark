@@ -2,21 +2,22 @@ import random
 from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
-
 from keyboards.info_buttons import main_info_buttons
 from keyboards.profile_buttons import deposit_menu, payment_methods, \
-    done_transaction, approving_pay, cryptopay_panel, crypto_pay_button, writing_reqs
+    done_transaction, approving_pay, cryptopay_panel, crypto_pay_button, writing_reqs, lolz_buttons
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from mongo import Database
 from utils.bank_type import check_bank
 from utils.profille_functions import get_ref_percent, get_rate_status, get_reqs
 from aiocryptopay import AioCryptoPay, Networks
+from LolzteamApi import LolzteamApi
 
 
 crypto = AioCryptoPay("112126:AA1BgAlop8sbbjxEXaxFiBfaZYChxkF74pA", Networks.MAIN_NET)
 db = Database()
 router = Router()
+lolz = LolzteamApi('01c295d581ca25fd24567b215738b5535b28f24d')
 
 
 class BalanceState(StatesGroup):
@@ -56,9 +57,10 @@ async def balance_menu(message: Message, state: FSMContext):
 async def balance_callback(call: CallbackQuery, state: FSMContext, bot: Bot):
     action = call.data.split("_")[1]
     if action == "deposit":
-        await call.message.answer(
+        await call.message.edit_text(
             "🧐 Cколько <b>₽</b> пополняем?\n\n"
-            "<i>минимальное пополнение -</i> <code>1000</code><i>₽</i>"
+            "<i>минимальное пополнение -</i> <code>250</code><i>₽</i>",
+            reply_markup=writing_reqs()
         )
         await state.set_state(BalanceState.amount)
 
@@ -185,11 +187,28 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
         card = db.functions.find_one({'my_cards': 'my_cards'})['cards'][x]
         bank = check_bank(card)
         await call.message.edit_text(
-            f"🏦 <i><b>{bank}</b></i>\n\n"
-            f"Сумма перевода: {data['amount']}₽\n"
-            f"Номер карты: <code>{card}</code>\n\n"
+            f"🏦 <i><b>{bank}</b></i>\n"
+            f"├ <b>Сумма перевода:</b> <code>{data['amount']}</code>₽\n"
+            f"└ <b>Номер карты:</b> <code>{card}</code>\n\n"
             f"<i>нажми на кнопку после успешного перевода</i>",
             reply_markup=done_transaction(call.from_user.id, data['amount'], bank)
+        )
+
+    elif action == "lolz":
+        comment = random.randint(0, 999999)
+        link = lolz.market.payments.generate_link(
+            data['amount'],
+            comment=comment,
+            redirect_url="https://t.me/spamsharkbot",
+            currency='rub',
+        )
+        await call.message.edit_text(
+            '💚 <b>Оплата Lolzteam</b>\n'
+            f'├ <b>Сумма:</b> <code>{data["amount"]}</code>₽\n'
+            f'└ <b>Комментарий:</b> <code>{comment}</code>\n\n'
+            f'⚠️ <i>Обратите внимание, что сумма перевода и комментарий должны полностью '
+            f'соответствовать заданной сумме и комментарию, иначе оплата не будет засчитана.</i>',
+            reply_markup=lolz_buttons(link, float(data['amount']), comment)
         )
 
     elif action == "crypto":
@@ -202,6 +221,13 @@ async def getting_method(call: CallbackQuery, state: FSMContext):
             "Выбери криптовалюуту:",
             reply_markup=cryptopay_panel(currency_list)
         )
+
+
+@router.callback_query(F.data.startswith("ihavetransfered"))
+async def lolz_pay_approve(call: CallbackQuery):
+    comment = call.data.split("_")[1]
+    payment = lolz.market.payments.history(comment=comment)
+    print(payment)
 
 
 @router.callback_query(F.data.startswith("paycryptobot"))

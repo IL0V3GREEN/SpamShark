@@ -7,3 +7,4 @@ requests==2.31.0
 aiocryptopay==0.2.8
 StrEnum==0.4.15
 pytz==2023.3
+LolzteamApi==1.0.25
