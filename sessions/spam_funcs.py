@@ -1,5 +1,3 @@
-import os
-import pathlib
 from pyrogram import Client
 from mongo import Database
 
@@ -17,16 +15,14 @@ proxy = {
 class Sessions:
     @staticmethod
     async def valid_sessions():
-        current_dir = pathlib.Path('.')
-        current_pattern = "*.session"
-        sessions = list(current_dir.glob(current_pattern))
+        sessions = list(db.session.find())
         available = 0
         files = []
         for session in sessions:
             app = Client(
-                session.name.split(".")[0],
-                db.find_session(session.name, 'api_id'),
-                db.find_session(session.name, 'api_hash'),
+                session['session_name'].split(".")[0],
+                session['api_id'],
+                session['api_hash'],
                 proxy=db.current_proxy()
             )
             try:
@@ -36,7 +32,7 @@ class Sessions:
                         if not profile.is_restricted and not profile.is_deleted:
                             available += 1
                         else:
-                            files.append(session.name)
+                            pass
                     else:
                         files.append(session.name)
                 except ConnectionError:
@@ -44,23 +40,20 @@ class Sessions:
             except AttributeError:
                 files.append(session.name)
         for file in files:
-            os.remove(file)
             db.delete_session(file)
 
         return available
 
     @staticmethod
     async def spammers_sessions():
-        current_dir = pathlib.Path('.')
-        current_pattern = "*.session"
-        sessions = list(current_dir.glob(current_pattern))
+        sessions = list(db.session.find())
         available = 0
         files = []
         for session in sessions:
             app = Client(
-                session.name.split(".")[0],
-                db.find_session(session.name, 'api_id'),
-                db.find_session(session.name, 'api_hash'),
+                session['session_name'].split(".")[0],
+                session['api_id'],
+                session['api_hash'],
                 proxy=db.current_proxy()
             )
             try:
@@ -78,8 +71,6 @@ class Sessions:
             except AttributeError:
                 files.append(session.name)
         for file in files:
-            os.remove(file)
             db.delete_session(file)
 
         return available
-
