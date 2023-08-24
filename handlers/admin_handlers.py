@@ -103,19 +103,24 @@ async def proxy_list(call: CallbackQuery, state: FSMContext):
 async def getting_proxy(message: Message, state: FSMContext, bot: Bot):
     await bot.delete_message(message.chat.id, message.message_id - 1)
     proxy = message.text.split(":")
-    db.update_proxy(proxy[0], proxy[1], int(proxy[2]), proxy[3], proxy[4])
-    await message.answer(
-        f"🌐 <b>Менеджер прокси</b>\n\n"
-        f"<b>Текущее прокси</b>\n"
-        f"├ <b>scheme:</b> <code>{db.current_proxy()['scheme']}</code>\n"
-        f"├ <b>hostname:</b> <code>{db.current_proxy()['hostname']}</code>\n"
-        f"├ <b>port:</b> <code>{db.current_proxy()['port']}</code>\n"
-        f"├ <b>username:</b> <code>{db.current_proxy()['username']}</code>\n"
-        f"└ <b>password:</b> <code>{db.current_proxy()['password']}</code>\n\n"
-        f"⚠️ <i>Не забудь, что теперь нужно входить в аккаунты с этого прокси</i>",
-        reply_markup=proxy_buttons()
-    )
-    await state.clear()
+    try:
+        db.update_proxy(proxy[0], proxy[1], int(proxy[2]), proxy[3], proxy[4])
+        await message.answer(
+            f"🌐 <b>Менеджер прокси</b>\n\n"
+            f"<b>Текущее прокси</b>\n"
+            f"├ <b>scheme:</b> <code>{db.current_proxy()['scheme']}</code>\n"
+            f"├ <b>hostname:</b> <code>{db.current_proxy()['hostname']}</code>\n"
+            f"├ <b>port:</b> <code>{db.current_proxy()['port']}</code>\n"
+            f"├ <b>username:</b> <code>{db.current_proxy()['username']}</code>\n"
+            f"└ <b>password:</b> <code>{db.current_proxy()['password']}</code>\n\n"
+            f"⚠️ <i>Не забудь, что теперь нужно входить в аккаунты с этого прокси</i>",
+            reply_markup=proxy_buttons()
+        )
+        await state.clear()
+    except ValueError:
+        await message.answer(
+            "📨 Отправь мне прокси в таком формате -> scheme:hostname:port:username:password"
+        )
 
 
 # @router.callback_query(F.data.startswith("tgsets"))
