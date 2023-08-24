@@ -119,7 +119,7 @@ async def getting_proxy(message: Message, state: FSMContext, bot: Bot):
 
 @router.callback_query(F.data.startswith("tgsets"))
 async def sessions_manipulations(call: CallbackQuery, state: FSMContext):
-    action = call.data.split("_")
+    action = call.data.split("_")[1]
     if action == 'add':
         await call.message.edit_text(
             "Отправь мне файл с LOLZ (Pyrogram .session):",
@@ -154,7 +154,7 @@ async def getting_session(message: Message, bot: Bot, state: FSMContext):
     )
 
 
-@router.message(TgSettings, F.text)
+@router.message(TgSettings.getting_api, F.text)
 async def getting_apis(message: Message, bot: Bot, state: FSMContext):
     await bot.delete_message(message.chat.id, message.message_id - 1)
     try:
