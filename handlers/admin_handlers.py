@@ -117,7 +117,7 @@ async def getting_proxy(message: Message, state: FSMContext, bot: Bot):
     await state.clear()
 
 
-@router.callback_query(F.text.startswith("tgsets"))
+@router.callback_query(F.data.startswith("tgsets"))
 async def sessions_manipulations(call: CallbackQuery, state: FSMContext):
     action = call.data.split("_")
     if action == 'add':
