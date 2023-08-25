@@ -88,11 +88,12 @@ def client_finish_buttons(url: list):
 
 def admin_spam_end(url: list | None = None):
     builder = InlineKeyboardBuilder()
-    for i in url:
-        builder.button(
-            text=f"{(i.split('-')[0])[:-1]}",
-            url=f"{(i.split('-')[1])[1:]}"
-        )
+    if url is not None:
+        for i in url:
+            builder.button(
+                text=f"{(i.split('-')[0])[:-1]}",
+                url=f"{(i.split('-')[1])[1:]}"
+            )
     builder.button(
         text="Спам-рассылка завершена",
         callback_data=f"endSpam"
